@@ -1,16 +1,14 @@
 package it.webformat.ticketsystem.data.models;
 
-import it.webformat.ticketsystem.data.archetypes.Dto;
 import it.webformat.ticketsystem.data.archetypes.Model;
+import it.webformat.ticketsystem.data.dto.WorkRecordDto;
 import it.webformat.ticketsystem.enums.TypeOfWorkRecord;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
@@ -36,7 +34,12 @@ public class WorkRecord implements Model {
     private TypeOfWorkRecord recordType;
 
     @Override
-    public Dto toDto() {
-        return null;
+    public WorkRecordDto toDto() {
+        return WorkRecordDto.builder()
+                .id(id)
+                .badgeId(badge.getId().toString())
+                .timeRecord(timeRecord.toString())
+                .recordType(recordType.toString())
+                .build();
     }
 }

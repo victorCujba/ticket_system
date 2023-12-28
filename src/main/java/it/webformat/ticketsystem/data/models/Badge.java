@@ -1,15 +1,15 @@
 package it.webformat.ticketsystem.data.models;
 
-import it.webformat.ticketsystem.data.archetypes.Dto;
 import it.webformat.ticketsystem.data.archetypes.Model;
+import it.webformat.ticketsystem.data.dto.BadgeDto;
+import it.webformat.ticketsystem.data.dto.WorkRecordDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
@@ -31,7 +31,20 @@ public class Badge implements Model {
     private Employee employee;
 
     @Override
-    public Dto toDto() {
-        return null;
+    public BadgeDto toDto() {
+        List<WorkRecordDto> workRecordDtoList;
+        if (!workRecordList.isEmpty()) {
+            workRecordDtoList = workRecordList.stream()
+                    .map(WorkRecord::toDto).toList();
+        } else {
+            workRecordDtoList = new ArrayList<>();
+        }
+
+
+        return BadgeDto.builder()
+                .id(id)
+                .idEmployee(employee.getId().toString())
+                .workRecordDtoList(workRecordDtoList)
+                .build();
     }
 }

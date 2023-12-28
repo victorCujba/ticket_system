@@ -1,15 +1,15 @@
 package it.webformat.ticketsystem.data.models;
 
-import it.webformat.ticketsystem.data.archetypes.Dto;
 import it.webformat.ticketsystem.data.archetypes.Model;
+import it.webformat.ticketsystem.data.dto.EmployeeDto;
+import it.webformat.ticketsystem.data.dto.TeamDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
@@ -35,7 +35,21 @@ public class Team implements Model {
 
 
     @Override
-    public Dto toDto() {
-        return null;
+    public TeamDto toDto() {
+
+        List<EmployeeDto> employeeDtoList;
+        if (!employeeList.isEmpty()) {
+            employeeDtoList = employeeList.stream()
+                    .map(Employee::toDto).toList();
+        } else {
+            employeeDtoList = new ArrayList<>();
+        }
+
+        return TeamDto.builder()
+                .id(id)
+                .name(name)
+                .employeeDtoList(employeeDtoList)
+                .projectId(project.getId().toString())
+                .build();
     }
 }

@@ -1,17 +1,16 @@
 package it.webformat.ticketsystem.data.models;
 
-import it.webformat.ticketsystem.data.archetypes.Dto;
 import it.webformat.ticketsystem.data.archetypes.Model;
+import it.webformat.ticketsystem.data.dto.CommentsDto;
+import it.webformat.ticketsystem.data.dto.LabourDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
@@ -29,7 +28,7 @@ public class Labour implements Model {
     private String description;
 
     @Column(name = "deadline")
-    private Date deadline;
+    private LocalDate deadline;
 
     @ManyToOne
     @JoinColumn(name = "id_employee")
@@ -39,7 +38,22 @@ public class Labour implements Model {
     private List<Comments> commentsList = new ArrayList<>();
 
     @Override
-    public Dto toDto() {
-        return null;
+    public LabourDto toDto() {
+
+        List<CommentsDto> commentsDtoList;
+        if (!commentsList.isEmpty()) {
+            commentsDtoList = commentsList.stream()
+                    .map(Comments::toDto).toList();
+        } else {
+            commentsDtoList = new ArrayList<>();
+        }
+
+        return LabourDto.builder()
+                .id(id)
+                .desc(description)
+                .deadline(String.valueOf(deadline))
+                .devId(employee.getId().toString())
+                .commentsDtoList(commentsDtoList)
+                .build();
     }
 }

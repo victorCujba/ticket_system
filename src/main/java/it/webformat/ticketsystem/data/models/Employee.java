@@ -1,25 +1,25 @@
 package it.webformat.ticketsystem.data.models;
 
-import it.webformat.ticketsystem.data.archetypes.Dto;
-import it.webformat.ticketsystem.data.archetypes.Model;
+import it.webformat.ticketsystem.data.archetypes.*;
+import it.webformat.ticketsystem.data.dto.*;
 import it.webformat.ticketsystem.enums.EmployeeRole;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.webformat.ticketsystem.utility.DataConversionUtils.numberToString;
+
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "employee")
-public class Employee implements Model {
+public class Employee implements ProjectManagerModel, DeveloperModel, ChiefExecutiveOfficerModel, Model {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +37,7 @@ public class Employee implements Model {
     private EmployeeRole employeeRole;
 
     @ManyToOne
-    @JoinColumn(name = "id_team", nullable = false)
+    @JoinColumn(name = "id_team")
     private Team team;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -52,7 +52,71 @@ public class Employee implements Model {
     private List<Labour> labourList = new ArrayList<>();
 
     @Override
-    public Dto toDto() {
-        return null;
+    public CeoDto toCeoDto() {
+        return CeoDto.builder()
+                .id(id)
+                .fullName(fullName)
+                .birthDate(String.valueOf(birthDate))
+                .employeeRole(String.valueOf(employeeRole))
+                .badgeId(numberToString(badge.getId()))
+                .build();
+    }
+
+    @Override
+    public DevDto toDevDto() {
+
+        List<LabourDto> labourDtoList;
+        if (!labourList.isEmpty()) {
+            labourDtoList = labourList.stream()
+                    .map(Labour::toDto).toList();
+        } else {
+            labourDtoList = new ArrayList<>();
+        }
+
+        return DevDto.builder()
+                .id(id)
+                .fullName(fullName)
+                .birthDate(String.valueOf(birthDate))
+                .employeeRole(String.valueOf(employeeRole))
+                .teamId(numberToString(team.getId()))
+                .projectId(numberToString(project.getId()))
+                .badgeId(numberToString(badge.getId()))
+                .labourDtoList(labourDtoList)
+                .build();
+    }
+
+    @Override
+    public PmDto toPmDto() {
+        return PmDto.builder()
+                .id(id)
+                .fullName(fullName)
+                .birthDate(String.valueOf(birthDate))
+                .employeeRole(String.valueOf(employeeRole))
+                .teamId(numberToString(team.getId()))
+                .projectId(numberToString(project.getId()))
+                .badgeId(numberToString(badge.getId()))
+                .build();
+    }
+
+    @Override
+    public EmployeeDto toDto() {
+        List<LabourDto> labourDtoList;
+        if (!labourList.isEmpty()) {
+            labourDtoList = labourList.stream()
+                    .map(Labour::toDto).toList();
+        } else {
+            labourDtoList = new ArrayList<>();
+        }
+
+        return EmployeeDto.builder()
+                .id(id)
+                .fullName(fullName)
+                .birthDate(String.valueOf(birthDate))
+                .employeeRole(String.valueOf(employeeRole))
+                .teamId(numberToString(team.getId()))
+                .projectId(numberToString(project.getId()))
+                .badgeId(numberToString(badge.getId()))
+                .labourDtoList(labourDtoList)
+                .build();
     }
 }

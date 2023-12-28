@@ -1,15 +1,13 @@
 package it.webformat.ticketsystem.data.models;
 
-import it.webformat.ticketsystem.data.archetypes.Dto;
 import it.webformat.ticketsystem.data.archetypes.Model;
+import it.webformat.ticketsystem.data.dto.CommentsDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
@@ -30,11 +28,16 @@ public class Comments implements Model {
     @JoinColumn(name = "id_labour", nullable = false)
     private Labour labour;
 
-    @Column
-    private LocalDateTime localDateTime;
+    @Column(name = "comment_date")
+    private LocalDateTime dateOfComment;
 
     @Override
-    public Dto toDto() {
-        return null;
+    public CommentsDto toDto() {
+        return CommentsDto.builder()
+                .id(id)
+                .body(body)
+                .labourId(String.valueOf(labour.getId()))
+                .commentDate(String.valueOf(dateOfComment))
+                .build();
     }
 }
