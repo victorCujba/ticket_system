@@ -1,5 +1,6 @@
 package it.webformat.ticketsystem.data.dto;
 
+import com.mysql.cj.util.StringUtils;
 import it.webformat.ticketsystem.data.archetypes.Dto;
 import it.webformat.ticketsystem.data.models.*;
 import it.webformat.ticketsystem.enums.EmployeeRole;
@@ -11,6 +12,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import static it.webformat.ticketsystem.utility.DataConversionUtils.stringToLong;
 
 @Data
 @AllArgsConstructor
@@ -43,9 +46,9 @@ public class EmployeeDto implements Dto {
                 .fullName(fullName)
                 .birthDate(LocalDate.parse(birthDate))
                 .employeeRole(EmployeeRole.valueOf(employeeRole))
-                .team(Team.builder().id(Long.valueOf(teamId)).build())
-                .project(Project.builder().id(Long.valueOf(projectId)).build())
-                .badge(Badge.builder().id(Long.valueOf(badgeId)).build())
+                .team(StringUtils.isNullOrEmpty(teamId) ? null : Team.builder().id(stringToLong(teamId)).build())
+                .project(StringUtils.isNullOrEmpty(projectId) ? null : Project.builder().id(stringToLong(projectId)).build())
+                .badge(StringUtils.isNullOrEmpty(badgeId) ? null : Badge.builder().id(stringToLong(badgeId)).build())
                 .labourList(labourList)
                 .build();
     }

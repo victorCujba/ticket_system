@@ -58,4 +58,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<Employee> getEmployeeByRole(EmployeeRole employeeRole) {
         return employeeRepository.getByEmployeeRole(employeeRole);
     }
+
+    @Override
+    public Employee findByFullName(String fullName) {
+        return employeeRepository.findByFullName(fullName);
+    }
 }

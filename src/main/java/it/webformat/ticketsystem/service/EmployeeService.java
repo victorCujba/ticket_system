@@ -21,4 +21,6 @@ public interface EmployeeService {
     Long getCountCeoEmployee();
 
     List<Employee> getEmployeeByRole(EmployeeRole employeeRole);
+
+    Employee findByFullName(String fullName);
 }

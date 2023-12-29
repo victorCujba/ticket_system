@@ -1,5 +1,6 @@
 package it.webformat.ticketsystem.data.dto;
 
+import com.mysql.cj.util.StringUtils;
 import it.webformat.ticketsystem.data.archetypes.Dto;
 import it.webformat.ticketsystem.data.models.Badge;
 import it.webformat.ticketsystem.data.models.Employee;
@@ -33,7 +34,7 @@ public class CeoDto implements Dto {
                 .fullName(fullName)
                 .birthDate(LocalDate.parse(birthDate))
                 .employeeRole(EmployeeRole.valueOf(employeeRole))
-                .badge(Badge.builder().id(stringToLong(badgeId)).build())
+                .badge(StringUtils.isNullOrEmpty(badgeId) ? null : Badge.builder().id(stringToLong(badgeId)).build())
                 .build();
     }
 }

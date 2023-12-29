@@ -1,5 +1,6 @@
 package it.webformat.ticketsystem.data.dto;
 
+import com.mysql.cj.util.StringUtils;
 import it.webformat.ticketsystem.data.archetypes.Dto;
 import it.webformat.ticketsystem.data.models.Badge;
 import it.webformat.ticketsystem.data.models.Employee;
@@ -37,9 +38,9 @@ public class PmDto implements Dto {
                 .fullName(fullName)
                 .birthDate(LocalDate.parse(birthDate))
                 .employeeRole(EmployeeRole.valueOf(employeeRole))
-                .team(Team.builder().id(stringToLong(teamId)).build())
-                .project(Project.builder().id(stringToLong(projectId)).build())
-                .badge(Badge.builder().id(stringToLong(badgeId)).build())
+                .team(StringUtils.isNullOrEmpty(teamId) ? null : Team.builder().id(stringToLong(teamId)).build())
+                .project(StringUtils.isNullOrEmpty(projectId) ? null : Project.builder().id(stringToLong(projectId)).build())
+                .badge(StringUtils.isNullOrEmpty(badgeId) ? null : Badge.builder().id(stringToLong(badgeId)).build())
                 .build();
     }
 }
