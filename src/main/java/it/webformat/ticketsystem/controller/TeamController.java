@@ -1,11 +1,11 @@
 package it.webformat.ticketsystem.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import it.webformat.ticketsystem.data.dto.BadgeDto;
-import it.webformat.ticketsystem.data.models.Badge;
+import it.webformat.ticketsystem.data.dto.TeamDto;
+import it.webformat.ticketsystem.data.models.Team;
 import it.webformat.ticketsystem.exceprions.IdMustBeNullException;
 import it.webformat.ticketsystem.exceprions.IdMustNotBeNullException;
-import it.webformat.ticketsystem.service.BadgeService;
+import it.webformat.ticketsystem.service.TeamService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,27 +15,27 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/badges")
-public class BadgeController {
+@RequestMapping("/teams")
+public class TeamController {
 
-    private BadgeService badgeService;
+    private TeamService teamService;
 
     @GetMapping("/v1")
     @Operation(description = """
-            This method is used to retrieve all Badges from database<br>
+            This method is used to retrieve all Teams from database<br>
                 """)
-    public List<BadgeDto> getAllBadges() {
-        return badgeService.findAll().stream().map(Badge::toDto).toList();
+    public List<TeamDto> getAllTeams() {
+        return teamService.findAll().stream().map(Team::toDto).toList();
     }
 
     @PostMapping("/v1")
     @Operation(description = """
-            This method is used to insert new Badge<br>
+            This method is used to insert new Team in database<br>
             """)
-    public BadgeDto createNewBadge(@RequestBody BadgeDto badgeDto) {
+    public TeamDto createNewTeam(@RequestBody TeamDto teamDto) {
         try {
-            Badge badge = badgeDto.toModel();
-            return badgeService.insert(badge).toDto();
+            Team team = teamDto.toModel();
+            return teamService.insert(team).toDto();
         } catch (IdMustBeNullException e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, e.getMessage()
@@ -45,12 +45,12 @@ public class BadgeController {
 
     @PutMapping("/v1")
     @Operation(description = """
-            This method is used to update existing  Badge<br>
+            This method is used to update existing  Team<br>
             """)
-    public BadgeDto updateBadge(@RequestBody BadgeDto badgeDto) {
+    public TeamDto updateTeam(@RequestBody TeamDto teamDto) {
         try {
-            Badge badge = badgeDto.toModel();
-            return badgeService.update(badge).toDto();
+            Team team = teamDto.toModel();
+            return teamService.update(team).toDto();
         } catch (IdMustNotBeNullException e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, e.getMessage()
@@ -60,20 +60,18 @@ public class BadgeController {
 
     @DeleteMapping("/v1/{id}")
     @Operation(description = """
-            This method is used to delete Badge by id<br>
+            This method is used to delete Team by id<br>
             """)
-    public Boolean deleteBadge(@PathVariable("id") Long id) {
-        return badgeService.deleteById(id);
+    public Boolean deleteTeam(@PathVariable("id") Long id) {
+        return teamService.deleteById(id);
     }
 
     @GetMapping("/v1/{id}")
     @Operation(description = """
-            This method is used to find Badge by id<br>
+            This method is used to find Team by id<br>
             """)
-    public BadgeDto getBadgeById(@PathVariable("id") Long id) {
-        return badgeService.findById(id).toDto();
+    public TeamDto getLabourById(@PathVariable("id") Long id) {
+        return teamService.findById(id).toDto();
     }
-
-
 
 }
