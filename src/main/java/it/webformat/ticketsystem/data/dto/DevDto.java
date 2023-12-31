@@ -29,6 +29,7 @@ public class DevDto implements Dto {
     private String projectId;
     private String badgeId;
     private List<LabourDto> labourDtoList;
+    private String referencedPM;
 
     @Override
     public Employee toModel() {
@@ -50,6 +51,7 @@ public class DevDto implements Dto {
                 .project(StringUtils.isNullOrEmpty(projectId) ? null : Project.builder().id(stringToLong(projectId)).build())
                 .badge(StringUtils.isNullOrEmpty(badgeId) ? null : Badge.builder().id(stringToLong(badgeId)).build())
                 .labourList(labourList)
+                .referencedPM(referencedPM)
                 .build();
     }
 }

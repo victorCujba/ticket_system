@@ -1,5 +1,6 @@
 package it.webformat.ticketsystem.data.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mysql.cj.util.StringUtils;
 import it.webformat.ticketsystem.data.archetypes.Dto;
 import it.webformat.ticketsystem.data.models.*;
@@ -28,6 +29,7 @@ public class EmployeeDto implements Dto {
     private String teamId;
     private String projectId;
     private String badgeId;
+    @JsonIgnore
     private List<LabourDto> labourDtoList;
 
     @Override

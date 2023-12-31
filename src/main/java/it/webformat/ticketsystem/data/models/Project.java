@@ -1,6 +1,8 @@
 package it.webformat.ticketsystem.data.models;
 
 import it.webformat.ticketsystem.data.archetypes.Model;
+import it.webformat.ticketsystem.data.dto.EmployeeDto;
+import it.webformat.ticketsystem.data.dto.LabourDto;
 import it.webformat.ticketsystem.data.dto.ProjectDto;
 import it.webformat.ticketsystem.data.dto.TeamDto;
 import jakarta.persistence.*;
@@ -8,6 +10,8 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static it.webformat.ticketsystem.utility.IdCheckUtils.getIdOrNull;
 
 @Builder
 @Getter
@@ -26,12 +30,17 @@ public class Project implements Model {
     @Column(name = "title")
     private String title;
 
-    @OneToOne
-    @JoinColumn(name = "id_employee", referencedColumnName = "id")
-    private Employee employee;
+    @OneToMany(mappedBy = "project")
+    private List<Employee> employees = new ArrayList<>();
 
     @OneToMany(mappedBy = "project")
     private List<Team> teams = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project")
+    private List<Labour> labours = new ArrayList<>();
+
+    @Column(name = "assigned_project_manager")
+    private String assignedPM;
 
     @Override
     public ProjectDto toDto() {
@@ -44,11 +53,28 @@ public class Project implements Model {
             teamDtoList = new ArrayList<>();
         }
 
+        List<LabourDto> labourDtoList;
+        if (!labours.isEmpty()) {
+            labourDtoList = labours.stream()
+                    .map(Labour::toDto).toList();
+        } else {
+            labourDtoList = new ArrayList<>();
+        }
+
+        List<EmployeeDto> employeeDtoList;
+        if (!employees.isEmpty()) {
+            employeeDtoList = employees.stream()
+                    .map(Employee::toDto).toList();
+        } else {
+            employeeDtoList = new ArrayList<>();
+        }
+
         return ProjectDto.builder()
                 .id(id)
                 .title(title)
-                .employeeId(employee.getId().toString())
+                .employeeDtoList(employeeDtoList)
                 .teamDtoList(teamDtoList)
+                .assignedPM(assignedPM)
                 .build();
     }
 }

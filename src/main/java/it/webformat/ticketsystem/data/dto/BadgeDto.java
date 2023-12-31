@@ -29,7 +29,7 @@ public class BadgeDto implements Dto {
     public Badge toModel() {
 
         List<WorkRecord> workRecordList;
-        if (!workRecordDtoList.isEmpty()) {
+        if (!(workRecordDtoList == null)) {
             workRecordList = workRecordDtoList.stream()
                     .map(WorkRecordDto::toModel).toList();
         } else {

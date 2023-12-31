@@ -2,6 +2,7 @@ package it.webformat.ticketsystem.data.dto;
 
 import it.webformat.ticketsystem.data.archetypes.Dto;
 import it.webformat.ticketsystem.data.models.Employee;
+import it.webformat.ticketsystem.data.models.Labour;
 import it.webformat.ticketsystem.data.models.Project;
 import it.webformat.ticketsystem.data.models.Team;
 import lombok.AllArgsConstructor;
@@ -20,8 +21,10 @@ public class ProjectDto implements Dto {
 
     private Long id;
     private String title;
-    private String employeeId;
+    private List<EmployeeDto> employeeDtoList;
     private List<TeamDto> teamDtoList;
+    private List<LabourDto> labourDtoList;
+    private String assignedPM;
 
     @Override
     public Project toModel() {
@@ -34,11 +37,29 @@ public class ProjectDto implements Dto {
             teamList = new ArrayList<>();
         }
 
+        List<Labour> labourList;
+        if (!labourDtoList.isEmpty()) {
+            labourList = labourDtoList.stream()
+                    .map(LabourDto::toModel).toList();
+        } else {
+            labourList = new ArrayList<>();
+        }
+
+        List<Employee> employeeList;
+        if (!employeeDtoList.isEmpty()) {
+            employeeList = employeeDtoList.stream()
+                    .map(EmployeeDto::toModel).toList();
+        } else {
+            employeeList = new ArrayList<>();
+        }
+
         return Project.builder()
                 .id(id)
                 .title(title)
-                .employee(Employee.builder().id(Long.valueOf(employeeId)).build())
+                .employees(employeeList)
                 .teams(teamList)
+                .labours(labourList)
+                .assignedPM(assignedPM)
                 .build();
     }
 }

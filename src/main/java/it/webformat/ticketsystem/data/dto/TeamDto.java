@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.webformat.ticketsystem.utility.DataConversionUtils.stringToLong;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,7 +40,7 @@ public class TeamDto implements Dto {
                 .id(id)
                 .name(name)
                 .employeeList(employeeList)
-                .project(Project.builder().id(Long.valueOf(projectId)).build())
+                .project(Project.builder().id(stringToLong(projectId)).build())
                 .build();
     }
 }

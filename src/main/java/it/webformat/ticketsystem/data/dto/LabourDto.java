@@ -1,9 +1,11 @@
 package it.webformat.ticketsystem.data.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.webformat.ticketsystem.data.archetypes.Dto;
 import it.webformat.ticketsystem.data.models.Comments;
 import it.webformat.ticketsystem.data.models.Employee;
 import it.webformat.ticketsystem.data.models.Labour;
+import it.webformat.ticketsystem.data.models.Project;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +14,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import static it.webformat.ticketsystem.utility.DataConversionUtils.stringToLong;
 
 @Data
 @AllArgsConstructor
@@ -23,6 +27,8 @@ public class LabourDto implements Dto {
     private String desc;
     private String deadline;
     private String devId;
+    private String projectId;
+    @JsonIgnore
     private List<CommentsDto> commentsDtoList;
 
     @Override
@@ -40,7 +46,8 @@ public class LabourDto implements Dto {
                 .id(id)
                 .description(desc)
                 .deadline(LocalDate.parse(deadline))
-                .employee(Employee.builder().id(Long.valueOf(devId)).build())
+                .employee(Employee.builder().id(stringToLong(devId)).build())
+                .project(Project.builder().id(stringToLong(projectId)).build())
                 .commentsList(commentsList)
                 .build();
     }
