@@ -8,6 +8,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+import static it.webformat.ticketsystem.utility.IdCheckUtils.getIdOrNull;
+
 @Builder
 @Getter
 @Setter
@@ -37,7 +39,7 @@ public class WorkRecord implements Model {
     public WorkRecordDto toDto() {
         return WorkRecordDto.builder()
                 .id(id)
-                .badgeId(badge.getId().toString())
+                .badgeId(getIdOrNull(badge))
                 .timeRecord(timeRecord.toString())
                 .recordType(recordType.toString())
                 .build();

@@ -10,6 +10,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.webformat.ticketsystem.utility.IdCheckUtils.getIdOrNull;
+
 @Builder
 @Getter
 @Setter
@@ -34,6 +36,10 @@ public class Labour implements Model {
     @JoinColumn(name = "id_employee")
     private Employee employee;
 
+    @ManyToOne
+    @JoinColumn(name = "id_project")
+    private Project project;
+
     @OneToMany(mappedBy = "labour")
     private List<Comments> commentsList = new ArrayList<>();
 
@@ -52,7 +58,7 @@ public class Labour implements Model {
                 .id(id)
                 .desc(description)
                 .deadline(String.valueOf(deadline))
-                .devId(employee.getId().toString())
+                .devId(getIdOrNull(employee))
                 .commentsDtoList(commentsDtoList)
                 .build();
     }

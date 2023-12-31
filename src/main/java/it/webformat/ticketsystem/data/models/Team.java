@@ -9,6 +9,8 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.webformat.ticketsystem.utility.IdCheckUtils.getIdOrNull;
+
 @Builder
 @Getter
 @Setter
@@ -29,8 +31,8 @@ public class Team implements Model {
     @OneToMany(mappedBy = "team")
     private List<Employee> employeeList;
 
-    @ManyToOne
-    @JoinColumn(name = "id_project", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_project")
     private Project project;
 
 
@@ -49,7 +51,7 @@ public class Team implements Model {
                 .id(id)
                 .name(name)
                 .employeeDtoList(employeeDtoList)
-                .projectId(project.getId().toString())
+                .projectId(getIdOrNull(project))
                 .build();
     }
 }

@@ -10,7 +10,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static it.webformat.ticketsystem.utility.DataConversionUtils.numberToString;
+import static it.webformat.ticketsystem.utility.DataConversionUtils.employeeRoleToString;
+import static it.webformat.ticketsystem.utility.IdCheckUtils.getIdOrNull;
 
 @Builder
 @Getter
@@ -36,12 +37,12 @@ public class Employee implements ProjectManagerModel, DeveloperModel, ChiefExecu
     @Column(name = "employee_role")
     private EmployeeRole employeeRole;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "id_team")
     private Team team;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_project", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "id_project")
     private Project project;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -51,6 +52,9 @@ public class Employee implements ProjectManagerModel, DeveloperModel, ChiefExecu
     @OneToMany(mappedBy = "employee")
     private List<Labour> labourList = new ArrayList<>();
 
+    @Column(name = "referenced_project_manager")
+    private String referencedPM;
+
     @Override
     public CeoDto toCeoDto() {
         return CeoDto.builder()
@@ -58,7 +62,7 @@ public class Employee implements ProjectManagerModel, DeveloperModel, ChiefExecu
                 .fullName(fullName)
                 .birthDate(String.valueOf(birthDate))
                 .employeeRole(String.valueOf(employeeRole))
-                .badgeId(numberToString(badge.getId()))
+                .badgeId(getIdOrNull(badge))
                 .build();
     }
 
@@ -78,10 +82,11 @@ public class Employee implements ProjectManagerModel, DeveloperModel, ChiefExecu
                 .fullName(fullName)
                 .birthDate(String.valueOf(birthDate))
                 .employeeRole(String.valueOf(employeeRole))
-                .teamId(numberToString(team.getId()))
-                .projectId(numberToString(project.getId()))
-                .badgeId(numberToString(badge.getId()))
+                .teamId(getIdOrNull(team))
+                .projectId(getIdOrNull(project))
+                .badgeId(getIdOrNull(badge))
                 .labourDtoList(labourDtoList)
+                .referencedPM(referencedPM)
                 .build();
     }
 
@@ -92,16 +97,16 @@ public class Employee implements ProjectManagerModel, DeveloperModel, ChiefExecu
                 .fullName(fullName)
                 .birthDate(String.valueOf(birthDate))
                 .employeeRole(String.valueOf(employeeRole))
-                .teamId(numberToString(team.getId()))
-                .projectId(numberToString(project.getId()))
-                .badgeId(numberToString(badge.getId()))
+                .teamId(getIdOrNull(team))
+                .projectId(getIdOrNull(project))
+                .badgeId(getIdOrNull(badge))
                 .build();
     }
 
     @Override
     public EmployeeDto toDto() {
         List<LabourDto> labourDtoList;
-        if (!labourList.isEmpty()) {
+        if (!(labourList == null)) {
             labourDtoList = labourList.stream()
                     .map(Labour::toDto).toList();
         } else {
@@ -112,10 +117,10 @@ public class Employee implements ProjectManagerModel, DeveloperModel, ChiefExecu
                 .id(id)
                 .fullName(fullName)
                 .birthDate(String.valueOf(birthDate))
-                .employeeRole(String.valueOf(employeeRole))
-                .teamId(numberToString(team.getId()))
-                .projectId(numberToString(project.getId()))
-                .badgeId(numberToString(badge.getId()))
+                .employeeRole(employeeRoleToString(employeeRole))
+                .teamId(getIdOrNull(team))
+                .projectId(getIdOrNull(project))
+                .badgeId(getIdOrNull(badge))
                 .labourDtoList(labourDtoList)
                 .build();
     }
