@@ -100,6 +100,7 @@ public class Employee implements ProjectManagerModel, DeveloperModel, ChiefExecu
                 .teamId(getIdOrNull(team))
                 .projectId(getIdOrNull(project))
                 .badgeId(getIdOrNull(badge))
+                .refPM(referencedPM)
                 .build();
     }
 

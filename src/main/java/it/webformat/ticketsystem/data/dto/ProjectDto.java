@@ -30,7 +30,7 @@ public class ProjectDto implements Dto {
     public Project toModel() {
 
         List<Team> teamList;
-        if (!teamDtoList.isEmpty()) {
+        if (!(teamDtoList == null)) {
             teamList = teamDtoList.stream()
                     .map(TeamDto::toModel).toList();
         } else {
@@ -38,7 +38,7 @@ public class ProjectDto implements Dto {
         }
 
         List<Labour> labourList;
-        if (!labourDtoList.isEmpty()) {
+        if (!(labourDtoList == null)) {
             labourList = labourDtoList.stream()
                     .map(LabourDto::toModel).toList();
         } else {
@@ -46,7 +46,7 @@ public class ProjectDto implements Dto {
         }
 
         List<Employee> employeeList;
-        if (!employeeDtoList.isEmpty()) {
+        if (!(employeeDtoList == null)) {
             employeeList = employeeDtoList.stream()
                     .map(EmployeeDto::toModel).toList();
         } else {

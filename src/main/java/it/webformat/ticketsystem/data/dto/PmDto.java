@@ -30,6 +30,7 @@ public class PmDto implements Dto {
     private String teamId;
     private String projectId;
     private String badgeId;
+    private String refPM;
 
     @Override
     public Employee toModel() {
@@ -41,6 +42,7 @@ public class PmDto implements Dto {
                 .team(StringUtils.isNullOrEmpty(teamId) ? null : Team.builder().id(stringToLong(teamId)).build())
                 .project(StringUtils.isNullOrEmpty(projectId) ? null : Project.builder().id(stringToLong(projectId)).build())
                 .badge(StringUtils.isNullOrEmpty(badgeId) ? null : Badge.builder().id(stringToLong(badgeId)).build())
+                .referencedPM(refPM)
                 .build();
     }
 }

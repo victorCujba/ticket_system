@@ -28,7 +28,7 @@ public class Team implements Model {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "team")
     private List<Employee> employeeList;
 
     @ManyToOne(cascade = CascadeType.ALL)

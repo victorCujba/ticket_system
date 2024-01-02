@@ -35,7 +35,7 @@ public class LabourDto implements Dto {
     public Labour toModel() {
 
         List<Comments> commentsList;
-        if (!commentsDtoList.isEmpty()) {
+        if (!(commentsDtoList == null)) {
             commentsList = commentsDtoList.stream()
                     .map(CommentsDto::toModel).toList();
         } else {

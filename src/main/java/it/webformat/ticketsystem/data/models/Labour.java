@@ -60,6 +60,7 @@ public class Labour implements Model {
                 .deadline(String.valueOf(deadline))
                 .devId(getIdOrNull(employee))
                 .commentsDtoList(commentsDtoList)
+                .projectId(getIdOrNull(project))
                 .build();
     }
 }
