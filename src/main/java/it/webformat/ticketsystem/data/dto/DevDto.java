@@ -28,19 +28,12 @@ public class DevDto implements Dto {
     private String teamId;
     private String projectId;
     private String badgeId;
-    private List<LabourDto> labourDtoList;
+    private String labourId;
     private String referencedPM;
 
     @Override
     public Employee toModel() {
 
-        List<Labour> labourList;
-        if (!(labourDtoList == null)) {
-            labourList = labourDtoList.stream()
-                    .map(LabourDto::toModel).toList();
-        } else {
-            labourList = new ArrayList<>();
-        }
 
         return Employee.builder()
                 .id(id)
@@ -50,7 +43,7 @@ public class DevDto implements Dto {
                 .team(StringUtils.isNullOrEmpty(teamId) ? null : Team.builder().id(stringToLong(teamId)).build())
                 .project(StringUtils.isNullOrEmpty(projectId) ? null : Project.builder().id(stringToLong(projectId)).build())
                 .badge(StringUtils.isNullOrEmpty(badgeId) ? null : Badge.builder().id(stringToLong(badgeId)).build())
-                .labourList(labourList)
+                .labour(StringUtils.isNullOrEmpty(labourId) ? null : Labour.builder().id(stringToLong(badgeId)).build())
                 .referencedPM(referencedPM)
                 .build();
     }

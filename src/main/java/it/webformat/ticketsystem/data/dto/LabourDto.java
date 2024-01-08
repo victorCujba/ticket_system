@@ -26,7 +26,7 @@ public class LabourDto implements Dto {
     private Long id;
     private String desc;
     private String deadline;
-    private String devId;
+    private List<EmployeeDto> employeeDtoList;
     private String projectId;
     @JsonIgnore
     private List<CommentsDto> commentsDtoList;
@@ -42,11 +42,20 @@ public class LabourDto implements Dto {
             commentsList = new ArrayList<>();
         }
 
+        List<Employee> employeeList;
+        if (!(employeeDtoList == null)) {
+            employeeList = employeeDtoList.stream()
+                    .map(EmployeeDto::toModel).toList();
+        } else {
+            employeeList = new ArrayList<>();
+        }
+
+
         return Labour.builder()
                 .id(id)
                 .description(desc)
                 .deadline(LocalDate.parse(deadline))
-                .employee(Employee.builder().id(stringToLong(devId)).build())
+                .employeeList(employeeList)
                 .project(Project.builder().id(stringToLong(projectId)).build())
                 .commentsList(commentsList)
                 .build();

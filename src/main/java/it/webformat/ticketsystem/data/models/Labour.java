@@ -2,6 +2,7 @@ package it.webformat.ticketsystem.data.models;
 
 import it.webformat.ticketsystem.data.archetypes.Model;
 import it.webformat.ticketsystem.data.dto.CommentsDto;
+import it.webformat.ticketsystem.data.dto.EmployeeDto;
 import it.webformat.ticketsystem.data.dto.LabourDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,16 +33,15 @@ public class Labour implements Model {
     @Column(name = "deadline")
     private LocalDate deadline;
 
-    @ManyToOne
-    @JoinColumn(name = "id_employee")
-    private Employee employee;
+    @OneToMany(mappedBy = "labour")
+    private List<Employee> employeeList;
 
     @ManyToOne
     @JoinColumn(name = "id_project")
     private Project project;
 
     @OneToMany(mappedBy = "labour")
-    private List<Comments> commentsList = new ArrayList<>();
+    private List<Comments> commentsList;
 
     @Override
     public LabourDto toDto() {
@@ -54,11 +54,19 @@ public class Labour implements Model {
             commentsDtoList = new ArrayList<>();
         }
 
+        List<EmployeeDto> employeeDtoList;
+        if (!employeeList.isEmpty()) {
+            employeeDtoList = employeeList.stream()
+                    .map(Employee::toDto).toList();
+        } else {
+            employeeDtoList = new ArrayList<>();
+        }
+
         return LabourDto.builder()
                 .id(id)
                 .desc(description)
                 .deadline(String.valueOf(deadline))
-                .devId(getIdOrNull(employee))
+                .employeeDtoList(employeeDtoList)
                 .commentsDtoList(commentsDtoList)
                 .projectId(getIdOrNull(project))
                 .build();
