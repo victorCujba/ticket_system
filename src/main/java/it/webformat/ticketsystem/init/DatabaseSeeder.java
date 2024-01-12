@@ -13,6 +13,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static it.webformat.ticketsystem.utility.DataConversionUtils.employeeRoleToString;
@@ -26,6 +27,7 @@ public class DatabaseSeeder {
     private final TeamService teamService;
     private final ProjectService projectService;
     private final LabourService labourService;
+    private final CommentsService commentsService;
 
 
     @EventListener
@@ -38,6 +40,8 @@ public class DatabaseSeeder {
         seedProjectTableWithData();
         setProjectIdToTeam();
         seedLabourTableWithData();
+        seedCommentsTableWithData(30);
+
     }
 
     private void seedEmployeeTableWithCeo() {
@@ -279,5 +283,25 @@ public class DatabaseSeeder {
         }
     }
 
+    public void seedCommentsTableWithData(int numberOfComments) {
+        List<Labour> labourList = labourService.findAll();
 
+        if (labourList != null && !labourList.isEmpty()) {
+            Random random = new Random();
+
+            for (int i = 0; i < numberOfComments; i++) {
+                Labour randomLabour = labourList.get(random.nextInt(labourList.size()));
+
+                Comments comments = Comments.builder()
+                        .body("Random comment for Labour: " + randomLabour.getDescription())
+                        .labour(randomLabour)
+                        .dateOfComment(LocalDateTime.now().minusDays(random.nextInt(30)))
+                        .build();
+
+                commentsService.insert(comments);
+            }
+
+
+        }
+    }
 }

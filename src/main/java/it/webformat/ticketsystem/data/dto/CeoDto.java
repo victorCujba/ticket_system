@@ -35,6 +35,7 @@ public class CeoDto implements Dto {
                 .birthDate(LocalDate.parse(birthDate))
                 .employeeRole(EmployeeRole.valueOf(employeeRole))
                 .badge(StringUtils.isNullOrEmpty(badgeId) ? null : Badge.builder().id(stringToLong(badgeId)).build())
+                .referencedPM("CEO doesn't have an referenced PM")
                 .build();
     }
 }
