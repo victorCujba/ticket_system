@@ -6,6 +6,7 @@ import it.webformat.ticketsystem.data.dto.PmDto;
 import it.webformat.ticketsystem.data.models.*;
 import it.webformat.ticketsystem.enums.EmployeeRole;
 import it.webformat.ticketsystem.enums.TaskStatus;
+import it.webformat.ticketsystem.enums.TypeOfWorkRecord;
 import it.webformat.ticketsystem.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 import static it.webformat.ticketsystem.utility.DataConversionUtils.employeeRoleToString;
@@ -28,6 +30,7 @@ public class DatabaseSeeder {
     private final ProjectService projectService;
     private final LabourService labourService;
     private final CommentsService commentsService;
+    private final WorkRecordService workRecordService;
 
 
     @EventListener
@@ -41,6 +44,7 @@ public class DatabaseSeeder {
         setProjectIdToTeam();
         seedLabourTableWithData();
         seedCommentsTableWithData(30);
+        seedWorkRecordTableWithData();
 
     }
 
@@ -301,7 +305,67 @@ public class DatabaseSeeder {
                 commentsService.insert(comments);
             }
 
-
         }
     }
+
+    private void seedWorkRecordTableWithData() {
+        List<Employee> employeeList = employeeService.findAll();
+
+        if (employeeList != null && !employeeList.isEmpty()) {
+            Random random = new Random();
+
+            for (Employee employee : employeeList) {
+                LocalDateTime startDate = LocalDateTime.now().minusDays(2);
+
+                while (startDate.isBefore(LocalDateTime.now())) {
+                    LocalDateTime startTime = LocalDateTime.of(startDate.toLocalDate(), LocalTime.of(8, 0));
+                    LocalDateTime lunchStart = LocalDateTime.of(startDate.toLocalDate(), LocalTime.of(13, 0));
+                    LocalDateTime lunchEnd = LocalDateTime.of(startDate.toLocalDate(), LocalTime.of(14, 0));
+                    LocalDateTime endTime = LocalDateTime.of(startDate.toLocalDate(), LocalTime.of(17, 0));
+
+                    //Morning record of work
+
+                    if (random.nextBoolean()) {
+                        insertWorkRecord(employee.getBadge(), startTime, lunchStart, TypeOfWorkRecord.ENTRY);
+                    }
+
+                    //Lunch break
+
+                    insertWorkRecord(employee.getBadge(), lunchStart, lunchEnd, TypeOfWorkRecord.BREAK_START);
+
+
+                    //Afternoon record
+                    if (random.nextBoolean()) {
+                        insertWorkRecord(employee.getBadge(), lunchEnd, endTime, TypeOfWorkRecord.BREAK_END);
+                    }
+                    //Exit record
+                    insertWorkRecord(employee.getBadge(), endTime, null, TypeOfWorkRecord.EXIT);
+
+
+                    startDate = startDate.plusDays(1);
+                }
+            }
+        }
+    }
+
+    private void insertWorkRecord(Badge badge, LocalDateTime start, LocalDateTime end, TypeOfWorkRecord type) {
+        WorkRecord workRecord = WorkRecord.builder()
+                .badge(badge)
+                .timeRecord(start)
+                .recordType(type)
+                .build();
+
+        workRecordService.insert(workRecord);
+
+        if (end != null) {
+            WorkRecord endRecord = WorkRecord.builder()
+                    .badge(badge)
+                    .timeRecord(end)
+                    .recordType(type == TypeOfWorkRecord.BREAK_START ? TypeOfWorkRecord.BREAK_END : type)
+                    .build();
+            workRecordService.insert(endRecord);
+        }
+    }
+
+
 }
