@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static it.webformat.ticketsystem.utility.DataConversionUtils.employeeRoleToString;
 import static it.webformat.ticketsystem.utility.IdCheckUtils.getIdOrNull;
@@ -47,9 +49,8 @@ public class Employee implements ProjectManagerModel, DeveloperModel, ChiefExecu
     @JoinColumn(name = "id_badge", referencedColumnName = "id")
     private Badge badge;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_labour", referencedColumnName = "id")
-    private Labour labour;
+    @OneToMany(mappedBy = "employee")
+    private List<Labour> labourList;
 
     @Column(name = "referenced_project_manager")
     private String referencedPM;
@@ -68,6 +69,14 @@ public class Employee implements ProjectManagerModel, DeveloperModel, ChiefExecu
     @Override
     public DevDto toDevDto() {
 
+        List<LabourDto> labourDtoList;
+        if (!(labourList == null)) {
+            labourDtoList = labourList.stream()
+                    .map(Labour::toDto).toList();
+        } else {
+            labourDtoList = new ArrayList<>();
+        }
+
 
         return DevDto.builder()
                 .id(id)
@@ -77,7 +86,7 @@ public class Employee implements ProjectManagerModel, DeveloperModel, ChiefExecu
                 .teamId(getIdOrNull(team))
                 .projectId(getIdOrNull(project))
                 .badgeId(getIdOrNull(badge))
-                .labourId(getIdOrNull(labour))
+                .labourDtoList(labourDtoList)
                 .referencedPM(referencedPM)
                 .build();
     }
@@ -99,6 +108,14 @@ public class Employee implements ProjectManagerModel, DeveloperModel, ChiefExecu
     @Override
     public EmployeeDto toDto() {
 
+        List<LabourDto> labourDtoList;
+        if (!(labourList == null)) {
+            labourDtoList = labourList.stream()
+                    .map(Labour::toDto).toList();
+        } else {
+            labourDtoList = new ArrayList<>();
+        }
+
 
         return EmployeeDto.builder()
                 .id(id)
@@ -108,7 +125,7 @@ public class Employee implements ProjectManagerModel, DeveloperModel, ChiefExecu
                 .teamId(getIdOrNull(team))
                 .projectId(getIdOrNull(project))
                 .badgeId(getIdOrNull(badge))
-                .labourId(getIdOrNull(labour))
+                .labourDtoList(labourDtoList)
                 .build();
     }
 }

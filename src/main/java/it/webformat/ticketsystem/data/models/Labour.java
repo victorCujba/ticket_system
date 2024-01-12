@@ -2,12 +2,10 @@ package it.webformat.ticketsystem.data.models;
 
 import it.webformat.ticketsystem.data.archetypes.Model;
 import it.webformat.ticketsystem.data.dto.CommentsDto;
-import it.webformat.ticketsystem.data.dto.EmployeeDto;
 import it.webformat.ticketsystem.data.dto.LabourDto;
 import it.webformat.ticketsystem.enums.TaskStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CollectionId;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -39,8 +37,9 @@ public class Labour implements Model {
     @Column(name = "task_status")
     private TaskStatus taskStatus;
 
-    @OneToMany(mappedBy = "labour")
-    private List<Employee> employeeList;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_employee", referencedColumnName = "id")
+    private Employee employee;
 
     @ManyToOne
     @JoinColumn(name = "id_project")
@@ -60,19 +59,12 @@ public class Labour implements Model {
             commentsDtoList = new ArrayList<>();
         }
 
-        List<EmployeeDto> employeeDtoList;
-        if (!(employeeList == null)) {
-            employeeDtoList = employeeList.stream()
-                    .map(Employee::toDto).toList();
-        } else {
-            employeeDtoList = new ArrayList<>();
-        }
 
         return LabourDto.builder()
                 .id(id)
                 .desc(description)
                 .deadline(String.valueOf(deadline))
-                .employeeDtoList(employeeDtoList)
+                .employeeId(getIdOrNull(employee))
                 .commentsDtoList(commentsDtoList)
                 .projectId(getIdOrNull(project))
                 .taskStatus(taskStatus)
