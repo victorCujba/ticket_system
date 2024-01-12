@@ -31,13 +31,13 @@ public class Project implements Model {
     private String title;
 
     @OneToMany(mappedBy = "project")
-    private List<Employee> employees = new ArrayList<>();
+    private List<Employee> employees;
 
     @OneToMany(mappedBy = "project")
-    private List<Team> teams = new ArrayList<>();
+    private List<Team> teams;
 
     @OneToMany(mappedBy = "project")
-    private List<Labour> labours = new ArrayList<>();
+    private List<Labour> labours;
 
     @Column(name = "assigned_project_manager")
     private String assignedPM;

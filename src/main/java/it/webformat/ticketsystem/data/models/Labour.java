@@ -4,8 +4,10 @@ import it.webformat.ticketsystem.data.archetypes.Model;
 import it.webformat.ticketsystem.data.dto.CommentsDto;
 import it.webformat.ticketsystem.data.dto.EmployeeDto;
 import it.webformat.ticketsystem.data.dto.LabourDto;
+import it.webformat.ticketsystem.enums.TaskStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CollectionId;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -33,6 +35,10 @@ public class Labour implements Model {
     @Column(name = "deadline")
     private LocalDate deadline;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "task_status")
+    private TaskStatus taskStatus;
+
     @OneToMany(mappedBy = "labour")
     private List<Employee> employeeList;
 
@@ -47,7 +53,7 @@ public class Labour implements Model {
     public LabourDto toDto() {
 
         List<CommentsDto> commentsDtoList;
-        if (!commentsList.isEmpty()) {
+        if (!(commentsList == null)) {
             commentsDtoList = commentsList.stream()
                     .map(Comments::toDto).toList();
         } else {
@@ -55,7 +61,7 @@ public class Labour implements Model {
         }
 
         List<EmployeeDto> employeeDtoList;
-        if (!employeeList.isEmpty()) {
+        if (!(employeeList == null)) {
             employeeDtoList = employeeList.stream()
                     .map(Employee::toDto).toList();
         } else {
@@ -69,6 +75,7 @@ public class Labour implements Model {
                 .employeeDtoList(employeeDtoList)
                 .commentsDtoList(commentsDtoList)
                 .projectId(getIdOrNull(project))
+                .taskStatus(taskStatus)
                 .build();
     }
 }
