@@ -3,15 +3,10 @@ package it.webformat.ticketsystem.init;
 import it.webformat.ticketsystem.data.dto.CeoDto;
 import it.webformat.ticketsystem.data.dto.DevDto;
 import it.webformat.ticketsystem.data.dto.PmDto;
-import it.webformat.ticketsystem.data.models.Badge;
-import it.webformat.ticketsystem.data.models.Employee;
-import it.webformat.ticketsystem.data.models.Project;
-import it.webformat.ticketsystem.data.models.Team;
+import it.webformat.ticketsystem.data.models.*;
 import it.webformat.ticketsystem.enums.EmployeeRole;
-import it.webformat.ticketsystem.service.BadgeService;
-import it.webformat.ticketsystem.service.EmployeeService;
-import it.webformat.ticketsystem.service.ProjectService;
-import it.webformat.ticketsystem.service.TeamService;
+import it.webformat.ticketsystem.enums.TaskStatus;
+import it.webformat.ticketsystem.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -30,6 +25,7 @@ public class DatabaseSeeder {
     private final BadgeService badgeService;
     private final TeamService teamService;
     private final ProjectService projectService;
+    private final LabourService labourService;
 
 
     @EventListener
@@ -41,6 +37,7 @@ public class DatabaseSeeder {
         seedTeamTableWithData();
         seedProjectTableWithData();
         setProjectIdToTeam();
+        seedLabourTableWithData();
     }
 
     private void seedEmployeeTableWithCeo() {
@@ -239,6 +236,45 @@ public class DatabaseSeeder {
                     team.setProject(project);
                     teamService.update(team);
                 }
+            }
+        }
+    }
+
+    private void seedLabourTableWithData() {
+        List<Employee> devList = employeeService.getEmployeeByRole(EmployeeRole.DEV);
+        List<Project> projects = projectService.findAll();
+
+        if (devList != null && !devList.isEmpty() && projects != null && !projects.isEmpty()) {
+            Random random = new Random();
+
+            for (Employee developer : devList) {
+                Project project = projects.get(random.nextInt(projects.size()));
+
+                for (TaskStatus status : TaskStatus.values()) {
+                    Employee attachedEmployee = employeeService.findById(developer.getId());
+
+                    Labour labour = Labour.builder()
+                            .description("Task for " + attachedEmployee.getFullName() + " - " + status.name())
+                            .deadline(LocalDate.now().plusDays(random.nextInt(30)))
+                            .taskStatus(status)
+                            .employee(attachedEmployee)
+                            .project(project)
+                            .build();
+
+                    labourService.insert(labour);
+                }
+
+                Employee attachedEmployee = employeeService.findById(developer.getId());
+
+                Labour expiredLabour = Labour.builder()
+                        .description("Expired Task for " + attachedEmployee.getFullName())
+                        .deadline(LocalDate.now().minusDays(random.nextInt(30)))
+                        .taskStatus(TaskStatus.TO_DO)
+                        .employee(attachedEmployee)
+                        .project(project)
+                        .build();
+
+                labourService.insert(expiredLabour);
             }
         }
     }

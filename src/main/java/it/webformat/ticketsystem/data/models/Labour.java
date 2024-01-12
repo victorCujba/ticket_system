@@ -37,8 +37,8 @@ public class Labour implements Model {
     @Column(name = "task_status")
     private TaskStatus taskStatus;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_employee", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "id_employee")
     private Employee employee;
 
     @ManyToOne
