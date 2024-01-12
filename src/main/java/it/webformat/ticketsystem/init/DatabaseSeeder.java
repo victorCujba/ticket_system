@@ -40,6 +40,7 @@ public class DatabaseSeeder {
         seedBadgeTableWithData();
         seedTeamTableWithData();
         seedProjectTableWithData();
+        setProjectIdToTeam();
     }
 
     private void seedEmployeeTableWithCeo() {
@@ -130,7 +131,7 @@ public class DatabaseSeeder {
 
         if (pmEmployeeList != null && devEmployeeList != null) {
 
-            List<List<Employee>> sublists = divideEmployeeIntoSublist(new ArrayList<>(devEmployeeList));
+            List<List<Employee>> sublist = divideEmployeeIntoSublist(new ArrayList<>(devEmployeeList));
 
             for (Employee pm : pmEmployeeList) {
                 Team existingTeam = pm.getTeam();
@@ -138,7 +139,7 @@ public class DatabaseSeeder {
                 if (existingTeam == null) {
                     String teamName = pm.getFullName() + " team.";
 
-                    List<Employee> teamList = sublists.remove(0);
+                    List<Employee> teamList = sublist.remove(0);
                     teamList.add(pm);
 
 
@@ -208,5 +209,39 @@ public class DatabaseSeeder {
             }
         }
     }
+
+    private void setProjectIdToTeam() {
+        List<Employee> pmList = employeeService.getEmployeeByRole(EmployeeRole.PM);
+
+        if (pmList != null) {
+            for (Employee employee : pmList) {
+                assignProjectToTeam(employee.getFullName());
+            }
+        } else {
+            System.out.println("PM does not exist in database");
+        }
+
+    }
+
+    private void assignProjectToTeam(String projectManager) {
+        Team team = teamService.findTeamByName(projectManager + " team.");
+
+        if (team != null) {
+            Employee projectManagerEmployee = team.getEmployeeList().stream()
+                    .filter(employee -> employee.getEmployeeRole() == EmployeeRole.PM)
+                    .findFirst()
+                    .orElse(null);
+
+            if (projectManagerEmployee != null) {
+                Project project = projectService.findByAssignedPM(projectManagerEmployee.getFullName());
+
+                if (project != null) {
+                    team.setProject(project);
+                    teamService.update(team);
+                }
+            }
+        }
+    }
+
 
 }

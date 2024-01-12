@@ -6,6 +6,7 @@ import it.webformat.ticketsystem.data.dto.*;
 import it.webformat.ticketsystem.data.models.Employee;
 import it.webformat.ticketsystem.data.models.Labour;
 import it.webformat.ticketsystem.data.models.Project;
+import it.webformat.ticketsystem.enums.EmployeeRole;
 import it.webformat.ticketsystem.exceprions.IdMustBeNullException;
 import it.webformat.ticketsystem.repository.EmployeeRepository;
 import it.webformat.ticketsystem.repository.ProjectRepository;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -55,9 +57,13 @@ public class CeoController {
     @Operation(description = """
             This method is used to assume PM by CEO<br>
             """)
-    public EmployeeDto assumeProjectManager(@RequestBody PmDto pmDto) {
+    public EmployeeDto assumeProjectManager(@RequestParam String fullName, @RequestParam LocalDate birthDate) {
         try {
-            Employee pm = pmDto.toModel();
+            Employee pm = Employee.builder()
+                    .fullName(fullName)
+                    .birthDate(birthDate)
+                    .employeeRole(EmployeeRole.PM)
+                    .build();
             return employeeService.insert(pm).toDto();
         } catch (IdMustBeNullException e) {
             throw new ResponseStatusException(
@@ -70,9 +76,13 @@ public class CeoController {
     @Operation(description = """
             This method is used to assume DEV by CEO<br>
             """)
-    public EmployeeDto assumeDeveloper(@RequestBody DevDto devDto) {
+    public EmployeeDto assumeDeveloper(@RequestParam String fullName, @RequestParam LocalDate birthDate) {
         try {
-            Employee dev = devDto.toModel();
+            Employee dev = Employee.builder()
+                    .employeeRole(EmployeeRole.DEV)
+                    .fullName(fullName)
+                    .birthDate(birthDate)
+                    .build();
             return employeeService.insert(dev).toDto();
         } catch (IdMustBeNullException e) {
             throw new ResponseStatusException(

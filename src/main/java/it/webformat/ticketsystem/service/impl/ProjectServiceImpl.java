@@ -47,4 +47,9 @@ public class ProjectServiceImpl implements ProjectService {
     public Project findById(Long id) {
         return projectRepository.findById(id).orElse(Project.builder().build());
     }
+
+    @Override
+    public Project findByAssignedPM(String assignedPM) {
+        return projectRepository.findByAssignedPM(assignedPM);
+    }
 }
