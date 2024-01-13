@@ -3,7 +3,9 @@ package it.webformat.ticketsystem.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.webformat.ticketsystem.data.dto.LabourDto;
+import it.webformat.ticketsystem.data.models.Employee;
 import it.webformat.ticketsystem.data.models.Labour;
+import it.webformat.ticketsystem.enums.EmployeeRole;
 import it.webformat.ticketsystem.enums.TaskStatus;
 import it.webformat.ticketsystem.exceprions.IdMustBeNullException;
 import it.webformat.ticketsystem.exceprions.IdMustNotBeNullException;
@@ -15,10 +17,14 @@ import it.webformat.ticketsystem.service.LabourService;
 import it.webformat.ticketsystem.service.ProjectService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @AllArgsConstructor
@@ -67,5 +73,67 @@ public class ProjectManagerController {
             );
         }
     }
+
+
+    @PostMapping("/assign-task-to-dev")
+    @Operation(description = """
+            This method is used to assign a task to developer
+            """)
+    public void assignLabourToDeveloper(@RequestParam Long labourId, @RequestParam Long developerId) {
+        Labour labour = labourService.findById(labourId);
+
+        if (labour.getId() == null) {
+            System.out.println("Labour with ID: " + labourId + "not found. Check labour ID please.");
+            return;
+        }
+
+        Employee developer = employeeService.findById(developerId);
+        if (developer.getId() == null) {
+            System.out.println("Developer with ID: " + developerId + " not found. Check developer ID please");
+            return;
+        }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String authenticatedPmFullName = authentication.getName();
+        Employee authenticatedPm = employeeService.findByFullName(authenticatedPmFullName);
+
+        if (authenticatedPm == null || !authenticatedPm.getEmployeeRole().equals(EmployeeRole.PM)) {
+            System.out.println("Authenticated user is not a Project Manager. Insufficient roots.");
+            return;
+        }
+        labour.setProject(authenticatedPm.getProject());
+
+        labour.setEmployee(developer);
+        labour.setDescription("Labour assigned to " + developer.getFullName());
+        labourService.update(labour);
+
+        developer.getLabourList().add(labour);
+        employeeService.update(developer);
+    }
+
+
+    @PostMapping("/remove-task-from-dev")
+    @Operation(description = """
+            This method is used to remove a task from developer
+            """)
+    public void removeLabourFromDeveloper(@RequestParam Long labourId, @RequestParam Long developerId) {
+        Employee developer = employeeService.findById(developerId);
+
+        if (developer.getId() == null) {
+            System.out.println("Developer not found with ID: " + developerId);
+            return;
+        }
+        List<Labour> developerLabourList = developer.getLabourList();
+        List<Labour> updatedLabourList = developerLabourList.stream()
+                .filter(labour -> !labour.getId().equals(labourId))
+                .collect(Collectors.toList());
+
+        developerLabourList.clear();
+        developerLabourList.addAll(updatedLabourList);
+
+        labourService.deleteById(labourId);
+        employeeService.update(developer);
+    }
+
 
 }
