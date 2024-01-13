@@ -25,7 +25,7 @@ public class Comments implements Model {
     private String body;
 
     @ManyToOne
-    @JoinColumn(name = "id_labour", nullable = false)
+    @JoinColumn(name = "id_labour", nullable = false, foreignKey = @ForeignKey(name = "FKh6s2mm4dwp2at8e6xk8rsqb0o", foreignKeyDefinition = "FOREIGN KEY (id_labour) REFERENCES labour(id) ON DELETE CASCADE"))
     private Labour labour;
 
     @Column(name = "comment_date")
