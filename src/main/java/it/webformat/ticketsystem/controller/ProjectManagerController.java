@@ -22,7 +22,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.sound.midi.Soundbank;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,7 +76,7 @@ public class ProjectManagerController {
         }
     }
 
-
+    // TODO: Update to ensure that a Project Manager (PM) can assign tasks only to Developers from its (PM's) team.
     @PostMapping("/assign-task-to-dev")
     @Operation(description = """
             This method is used to assign a task to developer
@@ -136,4 +138,31 @@ public class ProjectManagerController {
     }
 
 
+    //TODO Can be transformed in generic , passing TaskStatus parameter retrieve desired list of tasks(Labours)
+    @GetMapping("/show-working-on-labours")
+    @Operation(description = """
+            This method is used to show all working on Labours assigned to Developer
+            """)
+    public List<LabourDto> showWorkingOnLabours(@RequestParam Long developerId) {
+
+        Employee developer = employeeService.findById(developerId);
+
+        if (developer.getId() == null) {
+            System.out.println("Developer not found with ID: " + developerId);
+            return Collections.emptyList();
+        } else {
+            List<Labour> labourList = developer.getLabourList();
+
+            if (labourList == null || labourList.isEmpty()) {
+                System.out.println("Labours for Developer with ID: " + developer + "not found.");
+                return Collections.emptyList();
+            } else {
+                return labourList.stream()
+                        .filter(labour -> labour.getTaskStatus() == TaskStatus.WORKING_ON)
+                        .map(Labour::toDto)
+                        .collect(Collectors.toList());
+            }
+        }
+
+    }
 }
