@@ -2,13 +2,17 @@ package it.webformat.ticketsystem.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import it.webformat.ticketsystem.data.dto.CommentsDto;
 import it.webformat.ticketsystem.data.dto.LabourDto;
+import it.webformat.ticketsystem.data.dto.LabourWithCommentsDto;
+import it.webformat.ticketsystem.data.models.Comments;
 import it.webformat.ticketsystem.data.models.Employee;
 import it.webformat.ticketsystem.data.models.Labour;
 import it.webformat.ticketsystem.enums.EmployeeRole;
 import it.webformat.ticketsystem.enums.TaskStatus;
 import it.webformat.ticketsystem.exceptions.IdMustBeNullException;
 import it.webformat.ticketsystem.exceptions.IdMustNotBeNullException;
+import it.webformat.ticketsystem.repository.CommentsRepository;
 import it.webformat.ticketsystem.repository.EmployeeRepository;
 import it.webformat.ticketsystem.repository.LabourRepository;
 import it.webformat.ticketsystem.repository.ProjectRepository;
@@ -23,8 +27,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -40,6 +46,7 @@ public class ProjectManagerController {
     private EmployeeRepository employeeRepository;
     private ProjectRepository projectRepository;
     private ProjectService projectService;
+    private CommentsRepository commentsRepository;
 
     @PostMapping("/create-labour")
     @Operation(description = """
@@ -161,6 +168,46 @@ public class ProjectManagerController {
                         .map(Labour::toDto)
                         .collect(Collectors.toList());
             }
+        }
+    }
+
+    @GetMapping("/show-expired-labours-with-commits")
+    @Operation(description = """
+                  This method show all expired Labours of a Developer along with their commits
+            """)
+    public List<LabourWithCommentsDto> showExpiredLaboursWithComment(@RequestParam Long developerId) {
+        try {
+            Optional<Employee> optionalDeveloper = employeeRepository.findById(developerId);
+
+            if (optionalDeveloper.isPresent()) {
+                Employee developer = optionalDeveloper.get();
+                List<Labour> expiredLabours = labourRepository.findExpiredLabourByEmployee(developer.getId());
+
+                List<LabourWithCommentsDto> result = new ArrayList<>();
+
+                for (Labour labour : expiredLabours) {
+                    List<CommentsDto> commentsDtos = commentsRepository.findCommentsByLabour(labour)
+                            .stream().map(Comments::toDto).collect(Collectors.toList());
+
+                    LabourWithCommentsDto labourWithCommentsDto = new LabourWithCommentsDto(
+                            labour.getId(),
+                            labour.getDeadline(),
+                            commentsDtos,
+                            labour.getEmployee().getId(),
+                            labour.getEmployee().getFullName());
+
+                    result.add(labourWithCommentsDto);
+                }
+                return result;
+            } else {
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Developer with ID: " + developerId + " not found. Please insert a valid ID."
+                );
+            }
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e
+            );
         }
 
     }
