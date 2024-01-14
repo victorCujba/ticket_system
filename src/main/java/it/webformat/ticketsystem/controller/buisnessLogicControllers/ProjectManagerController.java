@@ -1,4 +1,4 @@
-package it.webformat.ticketsystem.controller;
+package it.webformat.ticketsystem.controller.buisnessLogicControllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -8,17 +8,16 @@ import it.webformat.ticketsystem.data.dto.LabourWithCommentsDto;
 import it.webformat.ticketsystem.data.models.Comments;
 import it.webformat.ticketsystem.data.models.Employee;
 import it.webformat.ticketsystem.data.models.Labour;
+import it.webformat.ticketsystem.data.models.Team;
 import it.webformat.ticketsystem.enums.EmployeeRole;
 import it.webformat.ticketsystem.enums.TaskStatus;
 import it.webformat.ticketsystem.exceptions.IdMustBeNullException;
 import it.webformat.ticketsystem.exceptions.IdMustNotBeNullException;
-import it.webformat.ticketsystem.repository.CommentsRepository;
-import it.webformat.ticketsystem.repository.EmployeeRepository;
-import it.webformat.ticketsystem.repository.LabourRepository;
-import it.webformat.ticketsystem.repository.ProjectRepository;
+import it.webformat.ticketsystem.repository.*;
 import it.webformat.ticketsystem.service.EmployeeService;
 import it.webformat.ticketsystem.service.LabourService;
 import it.webformat.ticketsystem.service.ProjectService;
+import it.webformat.ticketsystem.service.TeamService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -47,6 +46,8 @@ public class ProjectManagerController {
     private ProjectRepository projectRepository;
     private ProjectService projectService;
     private CommentsRepository commentsRepository;
+    private TeamRepository teamRepository;
+    private TeamService teamService;
 
     @PostMapping("/create-labour")
     @Operation(description = """
@@ -210,5 +211,32 @@ public class ProjectManagerController {
             );
         }
 
+    }
+
+    @PutMapping("/assign-developer-to-team")
+    @Operation(description = """
+                  This method is use to assign new Developer to Team.
+            """)
+    public void assignDeveloperToTeam(@RequestParam Long developerId, @RequestParam Long teamId) {
+        Optional<Employee> optionalEmployee = employeeRepository.findById(developerId);
+        Optional<Team> optionalTeam = teamRepository.findById(teamId);
+
+        if (optionalEmployee.isPresent() && optionalTeam.isPresent()) {
+            Employee developer = optionalEmployee.get();
+            Team team = optionalTeam.get();
+
+            Employee pm = team.getEmployeeList().stream()
+                    .filter(employee -> employee.getEmployeeRole() == EmployeeRole.PM)
+                    .findFirst().orElse(Employee.builder().build());
+
+            developer.setTeam(team);
+            developer.setReferencedPM(pm.getFullName());
+            developer.setProject(team.getProject());
+            employeeService.update(developer);
+
+            team.getEmployeeList().add(developer);
+            teamService.update(team);
+
+        }
     }
 }
