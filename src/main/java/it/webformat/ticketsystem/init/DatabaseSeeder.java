@@ -7,6 +7,8 @@ import it.webformat.ticketsystem.data.models.*;
 import it.webformat.ticketsystem.enums.EmployeeRole;
 import it.webformat.ticketsystem.enums.TaskStatus;
 import it.webformat.ticketsystem.enums.TypeOfWorkRecord;
+import it.webformat.ticketsystem.repository.EmployeeRepository;
+import it.webformat.ticketsystem.repository.ProjectRepository;
 import it.webformat.ticketsystem.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -17,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static it.webformat.ticketsystem.utility.DataConversionUtils.employeeRoleToString;
 
@@ -31,6 +34,8 @@ public class DatabaseSeeder {
     private final LabourService labourService;
     private final CommentsService commentsService;
     private final WorkRecordService workRecordService;
+    private final ProjectRepository projectRepository;
+    private final EmployeeRepository employeeRepository;
 
 
     @EventListener
@@ -45,6 +50,7 @@ public class DatabaseSeeder {
         seedLabourTableWithData();
         seedCommentsTableWithData(30);
         seedWorkRecordTableWithData();
+//        createCrossTeamProject();
 
     }
 
@@ -316,7 +322,7 @@ public class DatabaseSeeder {
             Random random = new Random();
 
             for (Employee employee : employeeList) {
-                LocalDateTime startDate = LocalDateTime.now().minusDays(2);
+                LocalDateTime startDate = LocalDateTime.now().minusDays(1);
 
                 while (startDate.isBefore(LocalDateTime.now())) {
                     LocalDateTime startTime = LocalDateTime.of(startDate.toLocalDate(), LocalTime.of(8, 0));
@@ -368,5 +374,67 @@ public class DatabaseSeeder {
         }
     }
 
+//    private void createCrossTeamProject() {
+//        Badge pmBadge = new Badge();
+//
+//        Project project = projectRepository.findById(1L)
+//                .orElseThrow(() -> new RuntimeException("Project with ID 1 not found."));
+//
+//        Employee projectManager = Employee.builder()
+//                .fullName("Remington Joyce")
+//                .birthDate(LocalDate.now().minusYears(45))
+//                .badge(pmBadge)
+//                .employeeRole(EmployeeRole.PM)
+//                .build();
+//        pmBadge.setEmployee(projectManager);
+//        projectManager.setReferencedPM("Project Manager is not assigned to himself");
+//        employeeService.insert(projectManager);
+//
+//        List<DevDto> developerDtoList = Arrays.asList(
+//                createDevDto("Valentin Mcdowell", "1993-09-25"),
+//                createDevDto("Adeline Cervantes", "1988-10-18"),
+//                createDevDto("Armani O'Donnell", "1922-03-22")
+//        );
+//
+//        List<Employee> developerList = developerDtoList.stream().map(DevDto::toModel).toList();
+//
+//        for (Employee employee : developerList) {
+//            Badge employeeBadge = new Badge();
+//            employee.setBadge(employeeBadge);
+//            employee.setReferencedPM(projectManager.getFullName());
+//            employeeBadge.setEmployee(employee);
+//            employeeService.insert(employee);
+//        }
+//        List<Employee> employeeListForTeam = new ArrayList<>();
+//        employeeListForTeam.add(projectManager);
+//        employeeListForTeam.addAll(developerList);
+//
+//        List<Team> teamList = new ArrayList<>();
+//
+//        Team team = Team.builder()
+//                .employeeList(employeeListForTeam)
+//                .name("Cross Team Project")
+//                .name(projectManager.getFullName() + " team")
+//                .build();
+//        teamList.add(team);
+//        teamList.addAll(project.getTeams());
+//        teamService.insert(team);
+//
+//        project.setTeams(teamList);
+//        team.setProject(project);
+//        projectService.update(project);
+//        teamService.update(team);
+//
+//
+//        for (Employee employee : employeeListForTeam) {
+//            employee.setProject(project);
+//            employee.setTeam(team);
+//            employeeService.update(employee);
+//        }
+//    }
+
 
 }
+
+
+

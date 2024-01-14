@@ -29,7 +29,7 @@ public class TeamDto implements Dto {
     public Team toModel() {
 
         List<Employee> employeeList;
-        if (!employeeDtoList.isEmpty()) {
+        if (!(employeeDtoList == null)) {
             employeeList = employeeDtoList.stream()
                     .map(EmployeeDto::toModel).toList();
         } else {

@@ -17,4 +17,6 @@ public interface ProjectService {
     Project findById(Long id);
 
     Project findByAssignedPM(String fullName);
+
+    List<Project> getProjectsWithManyTeams();
 }

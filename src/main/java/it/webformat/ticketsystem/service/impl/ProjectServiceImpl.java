@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -51,5 +52,12 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Project findByAssignedPM(String assignedPM) {
         return projectRepository.findByAssignedPM(assignedPM);
+    }
+
+    @Override
+    public List<Project> getProjectsWithManyTeams() {
+        return projectRepository.findAll().stream()
+                .filter(project -> project.getTeams().size() > 1)
+                .collect(Collectors.toList());
     }
 }

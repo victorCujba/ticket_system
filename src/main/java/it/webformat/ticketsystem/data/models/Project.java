@@ -11,7 +11,6 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static it.webformat.ticketsystem.utility.IdCheckUtils.getIdOrNull;
 
 @Builder
 @Getter
@@ -33,10 +32,10 @@ public class Project implements Model {
     @OneToMany(mappedBy = "project")
     private List<Employee> employees;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project"/*, cascade = CascadeType.ALL, fetch = FetchType.EAGER */)
     private List<Team> teams;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
     private List<Labour> labours;
 
     @Column(name = "assigned_project_manager")

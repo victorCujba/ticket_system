@@ -5,14 +5,13 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.webformat.ticketsystem.data.dto.CommentsDto;
 import it.webformat.ticketsystem.data.dto.LabourDto;
 import it.webformat.ticketsystem.data.dto.LabourWithCommentsDto;
-import it.webformat.ticketsystem.data.models.Comments;
-import it.webformat.ticketsystem.data.models.Employee;
-import it.webformat.ticketsystem.data.models.Labour;
-import it.webformat.ticketsystem.data.models.Team;
+import it.webformat.ticketsystem.data.dto.ProjectDto;
+import it.webformat.ticketsystem.data.models.*;
 import it.webformat.ticketsystem.enums.EmployeeRole;
 import it.webformat.ticketsystem.enums.TaskStatus;
 import it.webformat.ticketsystem.exceptions.IdMustBeNullException;
 import it.webformat.ticketsystem.exceptions.IdMustNotBeNullException;
+import it.webformat.ticketsystem.exceptions.NoProjectFoundException;
 import it.webformat.ticketsystem.repository.*;
 import it.webformat.ticketsystem.service.EmployeeService;
 import it.webformat.ticketsystem.service.LabourService;
@@ -239,4 +238,20 @@ public class ProjectManagerController {
 
         }
     }
+
+
+    @GetMapping("/show-cross-team-projects")
+    @Operation(description = """
+                  This method show all expired Labours of a Developer along with their commits
+            """)
+    public List<ProjectDto> showCrossTeamProjects() {
+        List<Project> crossTeamProjects = projectService.getProjectsWithManyTeams();
+
+        if (crossTeamProjects.isEmpty()) {
+            throw new NoProjectFoundException("Cross team projects not found.");
+        }
+        return crossTeamProjects.stream()
+                .map(Project::toDto).collect(Collectors.toList());
+    }
+
 }
