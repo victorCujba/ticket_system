@@ -4,10 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.webformat.ticketsystem.data.dto.*;
 import it.webformat.ticketsystem.data.models.Employee;
-import it.webformat.ticketsystem.data.models.Labour;
 import it.webformat.ticketsystem.data.models.Project;
 import it.webformat.ticketsystem.enums.EmployeeRole;
-import it.webformat.ticketsystem.exceprions.IdMustBeNullException;
+import it.webformat.ticketsystem.exceptions.IdMustBeNullException;
 import it.webformat.ticketsystem.repository.EmployeeRepository;
 import it.webformat.ticketsystem.repository.ProjectRepository;
 import it.webformat.ticketsystem.service.EmployeeService;
@@ -87,6 +86,23 @@ public class CeoController {
         } catch (IdMustBeNullException e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, e.getMessage()
+            );
+        }
+    }
+
+    @GetMapping("/show-referenced-pm")
+    @Operation(description = """
+            This method is used to show referenced PM (Project Manager) to DEV (Developer)
+            """)
+    public String showReferencedProjectManager(@RequestParam Long developerId) {
+
+        Optional<Employee> optionalEmployee = employeeRepository.findById(developerId);
+        if (optionalEmployee.isPresent()) {
+            Employee employee = optionalEmployee.get();
+            return employee.getReferencedPM();
+        } else {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Developer with ID: " + developerId + " not found. Please insert a valid ID."
             );
         }
     }
