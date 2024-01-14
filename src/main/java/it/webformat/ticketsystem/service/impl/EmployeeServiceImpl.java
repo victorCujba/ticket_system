@@ -2,8 +2,8 @@ package it.webformat.ticketsystem.service.impl;
 
 import it.webformat.ticketsystem.data.models.Employee;
 import it.webformat.ticketsystem.enums.EmployeeRole;
-import it.webformat.ticketsystem.exceprions.IdMustBeNullException;
-import it.webformat.ticketsystem.exceprions.IdMustNotBeNullException;
+import it.webformat.ticketsystem.exceptions.IdMustBeNullException;
+import it.webformat.ticketsystem.exceptions.IdMustNotBeNullException;
 import it.webformat.ticketsystem.repository.EmployeeRepository;
 import it.webformat.ticketsystem.service.EmployeeService;
 import lombok.AllArgsConstructor;

@@ -2,8 +2,8 @@ package it.webformat.ticketsystem.controller;
 
 import it.webformat.ticketsystem.data.dto.LabourDto;
 import it.webformat.ticketsystem.data.models.Labour;
-import it.webformat.ticketsystem.exceprions.IdMustBeNullException;
-import it.webformat.ticketsystem.exceprions.IdMustNotBeNullException;
+import it.webformat.ticketsystem.exceptions.IdMustBeNullException;
+import it.webformat.ticketsystem.exceptions.IdMustNotBeNullException;
 import it.webformat.ticketsystem.service.LabourService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

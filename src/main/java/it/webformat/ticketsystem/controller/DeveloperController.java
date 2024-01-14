@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.webformat.ticketsystem.data.dto.CommentsDto;
 import it.webformat.ticketsystem.data.models.Comments;
 import it.webformat.ticketsystem.data.models.Labour;
-import it.webformat.ticketsystem.exceprions.IdMustBeNullException;
+import it.webformat.ticketsystem.exceptions.IdMustBeNullException;
 import it.webformat.ticketsystem.repository.LabourRepository;
 import it.webformat.ticketsystem.service.CommentsService;
 import it.webformat.ticketsystem.service.LabourService;

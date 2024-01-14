@@ -1,8 +1,8 @@
 package it.webformat.ticketsystem.service.impl;
 
 import it.webformat.ticketsystem.data.models.Comments;
-import it.webformat.ticketsystem.exceprions.IdMustBeNullException;
-import it.webformat.ticketsystem.exceprions.IdMustNotBeNullException;
+import it.webformat.ticketsystem.exceptions.IdMustBeNullException;
+import it.webformat.ticketsystem.exceptions.IdMustNotBeNullException;
 import it.webformat.ticketsystem.repository.CommentsRepository;
 import it.webformat.ticketsystem.service.CommentsService;
 import lombok.AllArgsConstructor;

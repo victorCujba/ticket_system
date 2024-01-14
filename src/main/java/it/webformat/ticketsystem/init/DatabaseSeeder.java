@@ -272,6 +272,7 @@ public class DatabaseSeeder {
                     labourService.insert(labour);
                 }
 
+
                 Employee attachedEmployee = employeeService.findById(developer.getId());
 
                 Labour expiredLabour = Labour.builder()

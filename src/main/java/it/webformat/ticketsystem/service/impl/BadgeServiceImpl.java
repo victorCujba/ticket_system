@@ -1,8 +1,8 @@
 package it.webformat.ticketsystem.service.impl;
 
 import it.webformat.ticketsystem.data.models.Badge;
-import it.webformat.ticketsystem.exceprions.IdMustBeNullException;
-import it.webformat.ticketsystem.exceprions.IdMustNotBeNullException;
+import it.webformat.ticketsystem.exceptions.IdMustBeNullException;
+import it.webformat.ticketsystem.exceptions.IdMustNotBeNullException;
 import it.webformat.ticketsystem.repository.BadgeRepository;
 import it.webformat.ticketsystem.service.BadgeService;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package it.webformat.ticketsystem.exceprions;
+package it.webformat.ticketsystem.exceptions;
 
 public class IdMustNotBeNullException extends RuntimeException {
     public IdMustNotBeNullException() {
