@@ -1,14 +1,16 @@
-package it.webformat.ticketsystem.controller;
+package it.webformat.ticketsystem.controller.buisnessLogicControllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.webformat.ticketsystem.data.dto.*;
+import it.webformat.ticketsystem.data.models.Badge;
 import it.webformat.ticketsystem.data.models.Employee;
 import it.webformat.ticketsystem.data.models.Project;
 import it.webformat.ticketsystem.enums.EmployeeRole;
 import it.webformat.ticketsystem.exceptions.IdMustBeNullException;
 import it.webformat.ticketsystem.repository.EmployeeRepository;
 import it.webformat.ticketsystem.repository.ProjectRepository;
+import it.webformat.ticketsystem.service.BadgeService;
 import it.webformat.ticketsystem.service.EmployeeService;
 import it.webformat.ticketsystem.service.ProjectService;
 import lombok.AllArgsConstructor;
@@ -29,6 +31,7 @@ public class CeoController {
     private ProjectRepository projectRepository;
     private EmployeeService employeeService;
     private EmployeeRepository employeeRepository;
+    private BadgeService badgeService;
 
 
     @PutMapping("/assign-project")
@@ -58,9 +61,11 @@ public class CeoController {
             """)
     public EmployeeDto assumeProjectManager(@RequestParam String fullName, @RequestParam LocalDate birthDate) {
         try {
+            Badge badge = new Badge();
             Employee pm = Employee.builder()
                     .fullName(fullName)
                     .birthDate(birthDate)
+                    .badge(badge)
                     .employeeRole(EmployeeRole.PM)
                     .build();
             return employeeService.insert(pm).toDto();
@@ -77,12 +82,17 @@ public class CeoController {
             """)
     public EmployeeDto assumeDeveloper(@RequestParam String fullName, @RequestParam LocalDate birthDate) {
         try {
+            Badge badge = new Badge();
             Employee dev = Employee.builder()
                     .employeeRole(EmployeeRole.DEV)
                     .fullName(fullName)
+                    .badge(badge)
                     .birthDate(birthDate)
                     .build();
+            badge.setEmployee(dev);
             return employeeService.insert(dev).toDto();
+
+
         } catch (IdMustBeNullException e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, e.getMessage()
