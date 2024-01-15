@@ -1,6 +1,9 @@
 package it.webformat.ticketsystem.service.impl;
 
+import it.webformat.ticketsystem.data.models.Employee;
 import it.webformat.ticketsystem.data.models.Labour;
+import it.webformat.ticketsystem.data.models.Project;
+import it.webformat.ticketsystem.enums.TaskStatus;
 import it.webformat.ticketsystem.exceptions.IdMustBeNullException;
 import it.webformat.ticketsystem.exceptions.IdMustNotBeNullException;
 import it.webformat.ticketsystem.repository.LabourRepository;
@@ -46,5 +49,10 @@ public class LabourServiceImpl implements LabourService {
     @Override
     public Labour findById(Long id) {
         return labourRepository.findById(id).orElse(Labour.builder().build());
+    }
+
+    @Override
+    public Labour findByEmployeeAndProjectAndStatus(Employee employee, Project project, TaskStatus status) {
+        return labourRepository.findByEmployeeAndProjectAndTaskStatus(employee, project, status);
     }
 }

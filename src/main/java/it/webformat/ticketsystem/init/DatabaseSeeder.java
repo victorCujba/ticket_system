@@ -265,31 +265,40 @@ public class DatabaseSeeder {
                 Project project = projects.get(random.nextInt(projects.size()));
 
                 for (TaskStatus status : TaskStatus.values()) {
-                    Employee attachedEmployee = employeeService.findById(developer.getId());
+//                    Employee attachedEmployee = employeeService.findById(developer.getId());
+                    Labour existingLabour = labourService.findByEmployeeAndProjectAndStatus(developer, project, status);
 
-                    Labour labour = Labour.builder()
-                            .description("Task for " + attachedEmployee.getFullName() + " - " + status.name())
-                            .deadline(LocalDate.now().plusDays(random.nextInt(30)))
-                            .taskStatus(status)
-                            .employee(attachedEmployee)
-                            .project(project)
-                            .build();
+                    if (existingLabour != null) {
+                        labourService.update(existingLabour);
+                    } else {
+                        Labour labour = Labour.builder()
+                                .description("Task for " + developer.getFullName() + " - " + status.name())
+                                .deadline(LocalDate.now().plusDays(random.nextInt(30)))
+                                .taskStatus(status)
+                                .employee(developer)
+                                .project(project)
+                                .build();
 
-                    labourService.insert(labour);
+                        labourService.insert(labour);
+                    }
+
+
+//                Employee attachedEmployee = employeeService.findById(developer.getId());
+                    Labour existingExpiredLabour = labourService.findByEmployeeAndProjectAndStatus(developer, project, TaskStatus.WORKING_ON);
+                    if (existingExpiredLabour != null) {
+                        labourService.update(existingExpiredLabour);
+                    } else {
+                        Labour expiredLabour = Labour.builder()
+                                .description("Expired Task for " + developer.getFullName())
+                                .deadline(LocalDate.now().minusDays(random.nextInt(30)))
+                                .taskStatus(TaskStatus.WORKING_ON)
+                                .employee(developer)
+                                .project(project)
+                                .build();
+
+                        labourService.insert(expiredLabour);
+                    }
                 }
-
-
-                Employee attachedEmployee = employeeService.findById(developer.getId());
-
-                Labour expiredLabour = Labour.builder()
-                        .description("Expired Task for " + attachedEmployee.getFullName())
-                        .deadline(LocalDate.now().minusDays(random.nextInt(30)))
-                        .taskStatus(TaskStatus.TO_DO)
-                        .employee(attachedEmployee)
-                        .project(project)
-                        .build();
-
-                labourService.insert(expiredLabour);
             }
         }
     }
