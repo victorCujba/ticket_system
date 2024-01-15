@@ -1,0 +1,639 @@
+{
+	"info": {
+		"_postman_id": "944e67ff-6459-4954-aa44-8b834ff03eef",
+		"name": "Ticket-system",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30084264"
+	},
+	"item": [
+		{
+			"name": "CeoControllerRequests",
+			"item": [
+				{
+					"name": "AssignDeveloperToTeam",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "ceo",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Mario Rossi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/ceo/assign-developer-to-team?developerId=22&teamId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ceo",
+								"assign-developer-to-team"
+							],
+							"query": [
+								{
+									"key": "developerId",
+									"value": "22"
+								},
+								{
+									"key": "teamId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ShowReferencedProjectManager",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "ceo",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Mario Rossi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/ceo/show-referenced-pm?developerId=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ceo",
+								"show-referenced-pm"
+							],
+							"query": [
+								{
+									"key": "developerId",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateNewDeveloper",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/ceo/assume-dev?fullName=Cujba Victor&birthDate=1996-09-07",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ceo",
+								"assume-dev"
+							],
+							"query": [
+								{
+									"key": "fullName",
+									"value": "Cujba Victor"
+								},
+								{
+									"key": "birthDate",
+									"value": "1996-09-07"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateNewProjectManager",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "ceo",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Mario Rossi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/ceo/assume-pm?fullName=Roberto Carlos&birthDate=1973-04-10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ceo",
+								"assume-pm"
+							],
+							"query": [
+								{
+									"key": "fullName",
+									"value": "Roberto Carlos"
+								},
+								{
+									"key": "birthDate",
+									"value": "1973-04-10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AssignProjectToProjectManager",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "ceo",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Mario Rossi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/ceo/assign-project?projectId=3&projectManagerId=23",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ceo",
+								"assign-project"
+							],
+							"query": [
+								{
+									"key": "projectId",
+									"value": "3"
+								},
+								{
+									"key": "projectManagerId",
+									"value": "23"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AssignTeamToProject",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "ceo",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Mario Rossi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/ceo/assign-team-to-project?teamId=2&projectId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ceo",
+								"assign-team-to-project"
+							],
+							"query": [
+								{
+									"key": "teamId",
+									"value": "2"
+								},
+								{
+									"key": "projectId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ProjectManagerControllerRequests",
+			"item": [
+				{
+					"name": "AssignTaskToDeveloper",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pm",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "John Doe",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/project-manager/assign-task-to-dev?labourId=1&developerId=8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"project-manager",
+								"assign-task-to-dev"
+							],
+							"query": [
+								{
+									"key": "labourId",
+									"value": "1"
+								},
+								{
+									"key": "developerId",
+									"value": "8"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RemoveTaskFromDeveloper",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pm",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "John Doe",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "   {\r\n \"desc\": \"test desc 01\",\r\n    \"deadline\": \"2024-01-10\",\r\n    \"devId\": \"12\",\r\n    \"projectId\": 1\r\n\r\n   }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/project-manager/remove-task-from-dev?labourId=1&developerId=8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"project-manager",
+								"remove-task-from-dev"
+							],
+							"query": [
+								{
+									"key": "labourId",
+									"value": "1"
+								},
+								{
+									"key": "developerId",
+									"value": "8"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ShowAllTaskWithWorkingOnStatusOfDeveloper",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pm",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "John Doe",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/project-manager/show-working-on-labours?developerId=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"project-manager",
+								"show-working-on-labours"
+							],
+							"query": [
+								{
+									"key": "developerId",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ShowExpiredTasksWithCommentsOfDeveloper",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pm",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "John Doe",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/project-manager/show-expired-labours-with-commits?developerId=8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"project-manager",
+								"show-expired-labours-with-commits"
+							],
+							"query": [
+								{
+									"key": "developerId",
+									"value": "8"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ShowCrossTeamProjects",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pm",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "John Doe",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/project-manager/show-cross-team-projects",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"project-manager",
+								"show-cross-team-projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateTask",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pm",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "John Doe",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/project-manager/create-labour?desc=Test description&deadline=2024-01-25&taskStatus=TO_DO",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"project-manager",
+								"create-labour"
+							],
+							"query": [
+								{
+									"key": "desc",
+									"value": "Test description"
+								},
+								{
+									"key": "deadline",
+									"value": "2024-01-25"
+								},
+								{
+									"key": "taskStatus",
+									"value": "TO_DO"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DevControllerRequests",
+			"item": [
+				{
+					"name": "AdCommentToLabouByDeveloper",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "dev",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Ella Davis",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"commentBody\": \"Test comment\",\r\n    \"idLabour\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/dev/insert-comment?commentBody=TestComment&idLabour=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"dev",
+								"insert-comment"
+							],
+							"query": [
+								{
+									"key": "commentBody",
+									"value": "TestComment"
+								},
+								{
+									"key": "idLabour",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "testController",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "dev",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "Ella Davis",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/test/hello",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"test",
+						"hello"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
