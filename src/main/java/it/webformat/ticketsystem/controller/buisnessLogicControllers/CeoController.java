@@ -163,5 +163,32 @@ public class CeoController {
 
     }
 
+    @PutMapping("/assign-developer-to-team")
+    @Operation(description = """
+                  This method is use to assign new Developer to Team.
+            """)
+    public void assignDeveloperToTeam(@RequestParam Long developerId, @RequestParam Long teamId) {
+        Optional<Employee> optionalEmployee = employeeRepository.findById(developerId);
+        Optional<Team> optionalTeam = teamRepository.findById(teamId);
+
+        if (optionalEmployee.isPresent() && optionalTeam.isPresent()) {
+            Employee developer = optionalEmployee.get();
+            Team team = optionalTeam.get();
+
+            Employee pm = team.getEmployeeList().stream()
+                    .filter(employee -> employee.getEmployeeRole() == EmployeeRole.PM)
+                    .findFirst().orElse(Employee.builder().build());
+
+            developer.setTeam(team);
+            developer.setReferencedPM(pm.getFullName());
+            developer.setProject(team.getProject());
+            employeeService.update(developer);
+
+            team.getEmployeeList().add(developer);
+            teamService.update(team);
+
+        }
+    }
+
 
 }
