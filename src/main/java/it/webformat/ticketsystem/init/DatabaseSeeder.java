@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 import static it.webformat.ticketsystem.utility.DataConversionUtils.employeeRoleToString;
 
-@Component
+@Component("databaseSeeder")
 @AllArgsConstructor
 public class DatabaseSeeder {
 

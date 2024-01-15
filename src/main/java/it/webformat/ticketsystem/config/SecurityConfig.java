@@ -6,6 +6,9 @@ import it.webformat.ticketsystem.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -26,24 +29,19 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 
 @Configuration
+@Order(Ordered.LOWEST_PRECEDENCE - 100)
+@DependsOn("databaseSeeder")
 public class SecurityConfig {
 
     private final WhiteListConfiguration whiteList;
 
     private final CorsFilter corsFilter;
 
-    private final EmployeeRepository employeeRepository;
 
     @Autowired
-    public SecurityConfig(WhiteListConfiguration whiteList, CorsFilter corsFilter, EmployeeRepository employeeRepository) {
+    public SecurityConfig(WhiteListConfiguration whiteList, CorsFilter corsFilter) {
         this.whiteList = whiteList;
         this.corsFilter = corsFilter;
-        this.employeeRepository = employeeRepository;
-    }
-
-    @Bean
-    public static PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
 
@@ -54,16 +52,19 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(HttpMethod.PUT, "/ceo/**").hasRole(EmployeeRole.CEO.toString())
-                        .requestMatchers(HttpMethod.POST, "/ceo/**").hasRole(EmployeeRole.CEO.toString())
-                        .requestMatchers(HttpMethod.GET, "/employees/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/project-manager/**").hasRole(EmployeeRole.PM.toString())
-                        .requestMatchers(HttpMethod.POST, "/project-manager/**").hasRole(EmployeeRole.PM.toString())
-                        .requestMatchers(HttpMethod.DELETE, "/project-manager/**").hasRole(EmployeeRole.PM.toString())
-                        .requestMatchers(HttpMethod.POST, "/dev/**").hasRole(EmployeeRole.DEV.toString())
-
-                        .requestMatchers("/labours/**").hasRole(EmployeeRole.PM.toString())
+                        .requestMatchers(whiteList.getUrls()).permitAll()
                         .requestMatchers("/test/hello").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/employees/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/teams/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/projects/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/labours/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/employees/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/comments/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/badges/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/work-records/**").permitAll()
+                        .requestMatchers("/ceo/**").hasRole(EmployeeRole.CEO.toString())
+                        .requestMatchers("/project-manager/**").hasRole(EmployeeRole.PM.toString())
+                        .requestMatchers("/dev/**").hasRole(EmployeeRole.DEV.toString())
                         .anyRequest()
                         .authenticated()
 
@@ -77,46 +78,5 @@ public class SecurityConfig {
 
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-
-
-        List<Employee> ceoList = employeeRepository.getByEmployeeRole(EmployeeRole.CEO);
-        List<Employee> pmList = employeeRepository.getByEmployeeRole(EmployeeRole.PM);
-        List<Employee> devList = employeeRepository.getByEmployeeRole(EmployeeRole.DEV);
-
-        List<UserDetails> userDetailsList = new ArrayList<>();
-
-        for (Employee ceo : ceoList) {
-            UserDetails ceoEmployee = User.builder()
-                    .username(ceo.getFullName())
-                    .password(passwordEncoder().encode("ceo"))
-                    .roles(EmployeeRole.CEO.toString())
-                    .build();
-            userDetailsList.add(ceoEmployee);
-        }
-
-        for (Employee pm : pmList) {
-            UserDetails pmEmployee = User.builder()
-                    .username(pm.getFullName())
-                    .password(passwordEncoder().encode("pm"))
-                    .roles(EmployeeRole.PM.toString())
-                    .build();
-            userDetailsList.add(pmEmployee);
-        }
-
-        for (Employee dev : devList) {
-            UserDetails devEmployee = User.builder()
-                    .username(dev.getFullName())
-                    .password(passwordEncoder().encode("dev"))
-                    .roles(EmployeeRole.DEV.toString())
-                    .build();
-            userDetailsList.add(devEmployee);
-        }
-
-
-        return new InMemoryUserDetailsManager(userDetailsList);
-
-    }
 
 }
