@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static it.webformat.ticketsystem.utility.DataConversionUtils.numberToString;
+
 @AllArgsConstructor
 @RestController
 @SecurityRequirement(name = "authentication")
@@ -199,6 +201,15 @@ public class CeoController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee or Team not found with provided IDs.");
         }
+    }
+
+    @PostMapping("/create-and-assign-developer-to-team")
+    @Operation(description = """
+                  This method is use to create new Developer and assign him to Team.
+            """)
+    public ResponseEntity<String> createDeveloperAndAssignHimToTeam(@RequestParam String fullName, @RequestParam LocalDate birthDate, @RequestParam Long teamId) {
+        EmployeeDto employeeDto = assumeDeveloper(fullName, birthDate);
+        return assignDeveloperToTeam((employeeDto.getId()), teamId);
     }
 
 
