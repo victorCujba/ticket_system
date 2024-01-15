@@ -68,8 +68,11 @@ public class SecurityConfig {
                         .authenticated()
 
                 )
+                .formLogin(withDefaults())
                 .httpBasic(withDefaults())
-                .formLogin(withDefaults());
+                .logout(logout -> logout.logoutSuccessUrl("/")
+                        .permitAll());
+
         return http.build();
 
     }

@@ -1,17 +1,24 @@
-package it.webformat.ticketsystem.controller;
+package it.webformat.ticketsystem.config;
 
 import io.swagger.v3.oas.annotations.Operation;
 import it.webformat.ticketsystem.data.dto.WorkRecordDto;
+import it.webformat.ticketsystem.data.models.Badge;
 import it.webformat.ticketsystem.data.models.WorkRecord;
+import it.webformat.ticketsystem.enums.TypeOfWorkRecord;
 import it.webformat.ticketsystem.exceptions.IdMustBeNullException;
 import it.webformat.ticketsystem.exceptions.IdMustNotBeNullException;
+import it.webformat.ticketsystem.repository.BadgeRepository;
+import it.webformat.ticketsystem.service.BadgeService;
 import it.webformat.ticketsystem.service.WorkRecordService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @RestController
@@ -19,6 +26,45 @@ import java.util.List;
 public class WorkRecordController {
 
     private WorkRecordService workRecordService;
+    private BadgeService badgeService;
+    private BadgeRepository badgeRepository;
+
+    @PostMapping("/insert-work-records")
+    @Operation(description = """
+            This method is used to insert work record using badge ID and type of record as parameters.
+            """)
+    public WorkRecordDto insertWorkingRecord(@RequestParam Long badgeId, @RequestParam TypeOfWorkRecord type) {
+        try {
+            Optional<Badge> optionalBadge = badgeRepository.findById(badgeId);
+
+            if (optionalBadge.isPresent()) {
+                Badge badge = optionalBadge.get();
+
+                List<WorkRecord> workRecordList = badge.getWorkRecordList();
+                if (workRecordList == null) {
+                    workRecordList = new ArrayList<>();
+                }
+                WorkRecord workRecord = WorkRecord.builder()
+                        .timeRecord(LocalDateTime.now())
+                        .recordType(type)
+                        .badge(badge)
+                        .build();
+                workRecordList.add(workRecord);
+                badge.setWorkRecordList(workRecordList);
+
+                return workRecordService.insert(workRecord).toDto();
+            } else {
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Badge with ID: " + badgeId + "not found. Please check badge."
+                );
+            }
+        } catch (IdMustBeNullException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, e.getMessage()
+            );
+        }
+    }
+
 
     @GetMapping("/v1")
     @Operation(description = """
