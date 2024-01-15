@@ -18,7 +18,9 @@ import it.webformat.ticketsystem.service.LabourService;
 import it.webformat.ticketsystem.service.ProjectService;
 import it.webformat.ticketsystem.service.TeamService;
 import lombok.AllArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -87,18 +89,17 @@ public class ProjectManagerController {
     @Operation(description = """
             This method is used to assign a task to developer
             """)
-    public void assignLabourToDeveloper(@RequestParam Long labourId, @RequestParam Long developerId) {
+    public ResponseEntity<String> assignLabourToDeveloper(@RequestParam Long labourId, @RequestParam Long developerId) {
         Labour labour = labourService.findById(labourId);
 
         if (labour.getId() == null) {
-            System.out.println("Labour with ID: " + labourId + "not found. Check labour ID please.");
-            return;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Labour with ID: " + labourId + "not found. Check labour ID please.");
         }
 
         Employee developer = employeeService.findById(developerId);
         if (developer.getId() == null) {
-            System.out.println("Developer with ID: " + developerId + " not found. Check developer ID please");
-            return;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Developer with ID: " + developerId + " not found. Check developer ID please");
+
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -106,8 +107,8 @@ public class ProjectManagerController {
         Employee authenticatedPm = employeeService.findByFullName(authenticatedPmFullName);
 
         if (authenticatedPm == null || !authenticatedPm.getEmployeeRole().equals(EmployeeRole.PM)) {
-            System.out.println("Authenticated user is not a Project Manager. Insufficient roots.");
-            return;
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authenticated user is not a Project Manager. Insufficient roots.");
+
         }
         labour.setProject(authenticatedPm.getProject());
 
@@ -117,30 +118,38 @@ public class ProjectManagerController {
 
         developer.getLabourList().add(labour);
         employeeService.update(developer);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Task assigned successfully!");
     }
 
 
-    @PostMapping("/remove-task-from-dev")
+    @DeleteMapping("/remove-task-from-dev")
     @Operation(description = """
             This method is used to remove a task from developer
             """)
-    public void removeLabourFromDeveloper(@RequestParam Long labourId, @RequestParam Long developerId) {
+    public ResponseEntity<String> removeLabourFromDeveloper(@RequestParam Long labourId, @RequestParam Long developerId) {
         Employee developer = employeeService.findById(developerId);
 
         if (developer.getId() == null) {
-            System.out.println("Developer not found with ID: " + developerId);
-            return;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Developer not found with ID: " + developerId + " please check ID");
+
         }
         List<Labour> developerLabourList = developer.getLabourList();
         List<Labour> updatedLabourList = developerLabourList.stream()
                 .filter(labour -> !labour.getId().equals(labourId))
                 .collect(Collectors.toList());
 
+        if (developerLabourList.size() == updatedLabourList.size()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task with ID " + labourId + " not found in developer tasks.");
+        }
+
         developerLabourList.clear();
         developerLabourList.addAll(updatedLabourList);
 
         labourService.deleteById(labourId);
         employeeService.update(developer);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Task removed successfully!");
     }
 
 

@@ -18,6 +18,7 @@ import it.webformat.ticketsystem.service.ProjectService;
 import it.webformat.ticketsystem.service.TeamService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -45,7 +46,7 @@ public class CeoController {
     @Operation(description = """
             This method is used to assign PM to Project<br>
             """)
-    public void assignProjectToPM(@RequestParam Long projectId, @RequestParam Long projectManagerId) {
+    public ResponseEntity<String> assignProjectToPM(@RequestParam Long projectId, @RequestParam Long projectManagerId) {
 
         Optional<ProjectDto> projectDto = projectRepository.findById(projectId).map(Project::toDto);
         Optional<PmDto> pmDto = employeeRepository.findById(projectManagerId).map(Employee::toPmDto);
@@ -59,6 +60,10 @@ public class CeoController {
             projectService.update(project);
             employeeService.update(pm);
 
+            return ResponseEntity.ok("Project was assigned to Project Manager successfully!");
+
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Project or Project Manager not found");
         }
     }
 
@@ -128,16 +133,16 @@ public class CeoController {
     @Operation(description = """
             This method is used to assign team to a project.
             """)
-    public void assignTeamToProject(@RequestParam Long teamId, @RequestParam Long projectId) {
+    public ResponseEntity<String> assignTeamToProject(@RequestParam Long teamId, @RequestParam Long projectId) {
         Optional<Team> optionalTeam = teamRepository.findById(teamId);
         Optional<Project> optionalProject = projectRepository.findById(projectId);
 
         if (optionalTeam.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Team with ID " + teamId + " not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Team with ID " + teamId + " not found");
         }
 
         if (optionalProject.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project with ID " + projectId + " not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Project with ID " + projectId + " not found");
         }
         Team team = optionalTeam.get();
         Project project = optionalProject.get();
@@ -161,13 +166,15 @@ public class CeoController {
         team.setProject(project);
         teamService.update(team);
 
+        return ResponseEntity.ok("Team assigned to project successfully!");
+
     }
 
     @PutMapping("/assign-developer-to-team")
     @Operation(description = """
                   This method is use to assign new Developer to Team.
             """)
-    public void assignDeveloperToTeam(@RequestParam Long developerId, @RequestParam Long teamId) {
+    public ResponseEntity<String> assignDeveloperToTeam(@RequestParam Long developerId, @RequestParam Long teamId) {
         Optional<Employee> optionalEmployee = employeeRepository.findById(developerId);
         Optional<Team> optionalTeam = teamRepository.findById(teamId);
 
@@ -187,6 +194,10 @@ public class CeoController {
             team.getEmployeeList().add(developer);
             teamService.update(team);
 
+            return ResponseEntity.ok("Developer assigned to the team successfully!");
+
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee or Team not found with provided IDs.");
         }
     }
 

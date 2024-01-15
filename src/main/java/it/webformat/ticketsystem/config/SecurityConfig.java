@@ -59,9 +59,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/employees/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/project-manager/**").hasRole(EmployeeRole.PM.toString())
                         .requestMatchers(HttpMethod.POST, "/project-manager/**").hasRole(EmployeeRole.PM.toString())
+                        .requestMatchers(HttpMethod.DELETE, "/project-manager/**").hasRole(EmployeeRole.PM.toString())
                         .requestMatchers(HttpMethod.POST, "/dev/**").hasRole(EmployeeRole.DEV.toString())
 
                         .requestMatchers("/labours/**").hasRole(EmployeeRole.PM.toString())
+                        .requestMatchers("/test/hello").permitAll()
                         .anyRequest()
                         .authenticated()
 
