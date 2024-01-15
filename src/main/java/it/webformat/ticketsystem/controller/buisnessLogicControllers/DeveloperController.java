@@ -1,4 +1,4 @@
-package it.webformat.ticketsystem.controller;
+package it.webformat.ticketsystem.controller.buisnessLogicControllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -30,14 +31,17 @@ public class DeveloperController {
     @Operation(description = """
             This method is used to insert comment to labour<br>
             """)
-    public CommentsDto addComment(@RequestBody CommentsDto commentsDto, @RequestParam Long idLabour) {
+    public CommentsDto addComment(@RequestParam String commentBody, @RequestParam Long idLabour) {
         try {
-            Comments comments = commentsDto.toModel();
-            Optional<Labour> labour = labourRepository.findById(idLabour);
-            if (labour.isPresent()) {
-                Labour labour1 = labour.get();
-                labour1.getCommentsList().add(comments);
-                labourService.update(labour1);
+
+            Comments comments = Comments.builder().body(commentBody).build();
+            Optional<Labour> optionalLabour = labourRepository.findById(idLabour);
+            if (optionalLabour.isPresent()) {
+                Labour labour = optionalLabour.get();
+                comments.setLabour(labour);
+                comments.setDateOfComment(LocalDateTime.now());
+                labour.getCommentsList().add(comments);
+                labourService.update(labour);
             }
             return commentsService.insert(comments).toDto();
         } catch (IdMustBeNullException e) {
