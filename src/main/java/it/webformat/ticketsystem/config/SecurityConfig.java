@@ -78,6 +78,7 @@ public class SecurityConfig {
 
         List<Employee> ceoList = employeeRepository.getByEmployeeRole(EmployeeRole.CEO);
         List<Employee> pmList = employeeRepository.getByEmployeeRole(EmployeeRole.PM);
+        List<Employee> devList = employeeRepository.getByEmployeeRole(EmployeeRole.DEV);
 
         List<UserDetails> userDetailsList = new ArrayList<>();
 
@@ -97,6 +98,15 @@ public class SecurityConfig {
                     .roles(EmployeeRole.PM.toString())
                     .build();
             userDetailsList.add(pmEmployee);
+        }
+
+        for (Employee dev : devList) {
+            UserDetails devEmployee = User.builder()
+                    .username(dev.getFullName())
+                    .password(passwordEncoder().encode("dev"))
+                    .roles(EmployeeRole.DEV.toString())
+                    .build();
+            userDetailsList.add(devEmployee);
         }
 
 
