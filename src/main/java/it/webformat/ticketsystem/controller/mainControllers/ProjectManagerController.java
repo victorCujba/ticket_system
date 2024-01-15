@@ -1,4 +1,4 @@
-package it.webformat.ticketsystem.controller.buisnessLogicControllers;
+package it.webformat.ticketsystem.controller.mainControllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
